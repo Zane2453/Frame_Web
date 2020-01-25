@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    $(document).ready(function() {
+        var socket = io.connect();
+        socket.on('frame', function(msg) {
+            console.log(msg);
+        });
+    });
+</script>
+{% endblock %}
