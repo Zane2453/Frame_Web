@@ -26,6 +26,9 @@ end_game = False
 player_uuid = None
 play_mode = None # 0: guess; 1: shake
 
+signal_type = None
+status = None
+
 ''' Function of Generating QR_Code '''
 def genQRimg(url):
     qr = qrcode.QRCode(
@@ -131,6 +134,24 @@ def cmd2processing(msg):
     print("[SocketIO] send msg ", msg)
     socketio.emit("frame", msg)
 
+def socket_loading_handler():
+    global signal_type, status
+
+    while True:
+        if (signal_type == "load"):
+            push_PlayAck_I(json.dumps({
+                "op": "Loading",
+                "data": status
+            }))
+            if (status == "finish"):
+                break
+        elif (signal_type == "display"):
+            push_PlayAck_I(json.dumps({
+                "op": "DisplayFinish",
+                "data": "true"
+            }))
+            break
+
 ''' IoTtalk data handler '''
 def on_data(odf_name, data):
     global player_uuid, end_game, play_mode
@@ -199,7 +220,7 @@ def on_data(odf_name, data):
             # query DB for getting answer pictures
             cmd2processing(get_answer_pic(data["id"]))
             # start loading, and when loading is finished, push_PlayAck_I
-            processing_loading_handler()
+            socket_loading_handler()
         elif (data["type"] == "weather"):
             # weather DA
             weather = data["data"]
@@ -218,7 +239,7 @@ def on_data(odf_name, data):
         # let processing display the remained pictures
         cmd2processing("e,0;")
         # start loading, and when display is finished, push_PlayAck_I
-        processing_loading_handler()
+        socket_loading_handler()
     return True
     #socketio.emit("frame", "test")
 
@@ -272,6 +293,8 @@ def index():
 
 @socketio.on("loading")
 def loading_handler(data):
+    global signal_type, status
+
     signal_type = data.split(":")[0]
     status = data.split(":")[1]
     print("[SocketIO] receive data ", signal_type, status)
@@ -282,9 +305,9 @@ if __name__ == "__main__":
     print('[sys] Create QR Code Successfully')
 
     ''' create database '''
-    '''connect()
+    connect()
     db_session = get_session()
-    print('[sys] Create Database Successfully')'''
+    print('[sys] Create Database Successfully')
 
     t = threading.Thread(target=IoT_connect, daemon=True)
     t.start()

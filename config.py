@@ -14,7 +14,7 @@ odf_list = [
     ['Name-O', ['string']]
 ]
 
-webServerURL = 'http://140.113.131.64'
+webServerURL = 'http://localhost'
 webServerPort = 7788
 
 manageServerURL = 'http://localhost'
