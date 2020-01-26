@@ -26,6 +26,7 @@ end_game = False
 player_uuid = None
 play_mode = None # 0: guess; 1: shake
 
+''' SocketIO data '''
 signal_type = None
 status = None
 
@@ -123,13 +124,14 @@ app = Flask(__name__)
 bootstrap = Bootstrap(app)
 socketio = SocketIO(app)
 
+''' IoTtalk data function '''
 def push_PlayAck_I(data):
     global _flags
     if(_flags.get("PlayAck-I")):
         dan.log("[da] push PlayAck-I ", data)
         dan.push("PlayAck-I", data)
 
-def cmd2processing(msg):
+def cmd2socket(msg):
     global socketio
     print("[SocketIO] send msg ", msg)
     socketio.emit("frame", msg)
@@ -176,7 +178,7 @@ def on_data(odf_name, data):
                     "groupList": get_group_list()
                 }))
                 # let processing show "play"
-                cmd2processing("s,0;")
+                cmd2socket("s,0;")
             else:
                 push_PlayAck_I(json.dumps({
                     "op": "PlayRes",
@@ -189,7 +191,7 @@ def on_data(odf_name, data):
                 player_uuid = None
                 play_mode = None
                 # let processing show "see you"
-                cmd2processing("q,0;")
+                cmd2socket("q,0;")
 
     elif (odf_name == "Name-O"):
         data = json.loads(data[0])
@@ -199,7 +201,7 @@ def on_data(odf_name, data):
             # keep game mode
             play_mode = data["mode"]
             # show group page
-            cmd2processing("g,0;")
+            cmd2socket("g,0;")
         elif (data["type"] == "group"):
             if (player_uuid == None):
                 return True
@@ -211,33 +213,33 @@ def on_data(odf_name, data):
             if (play_mode == 0):
                 pass
             elif (play_mode == 1):
-                cmd2processing("m,0;")
+                cmd2socket("m,0;")
         elif (data["type"] == "answer"):
             if (player_uuid == None):
                 return True
             # this game is start
             end_game = False
             # query DB for getting answer pictures
-            cmd2processing(get_answer_pic(data["id"]))
+            cmd2socket(get_answer_pic(data["id"]))
             # start loading, and when loading is finished, push_PlayAck_I
             socket_loading_handler()
         elif (data["type"] == "weather"):
             # weather DA
             weather = data["data"]
             # send weather to processing
-            cmd2processing("w," + weather + ";")
+            cmd2socket("w," + weather + ";")
     elif (odf_name == "Forward"):
         if (player_uuid == None or end_game == True or data[0] == 0):
             return True
         # let processing display the next picture
-        cmd2processing("f,0;")
+        cmd2socket("f,0;")
     elif (odf_name == "End"):
         if (player_uuid == None or end_game == True or data[0] == 0):
             return True
         # this game is over
         end_game = True
         # let processing display the remained pictures
-        cmd2processing("e,0;")
+        cmd2socket("e,0;")
         # start loading, and when display is finished, push_PlayAck_I
         socket_loading_handler()
     return True
@@ -312,5 +314,4 @@ if __name__ == "__main__":
     t = threading.Thread(target=IoT_connect, daemon=True)
     t.start()
 
-    #app.run()
-    socketio.run(app, host='127.0.0.1', port='7788')
+    socketio.run(app, host='127.0.0.1', port='5000')
