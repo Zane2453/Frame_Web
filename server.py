@@ -1,6 +1,6 @@
-from flask import Flask, request, session
-from flask import render_template
-from flask_socketio import SocketIO, emit
+from flask import Flask
+from flask import render_template, render_template_string
+from flask_socketio import SocketIO
 from flask_bootstrap import Bootstrap
 
 from model import (connect, get_session,
@@ -10,14 +10,11 @@ from iottalkpy import dan
 from config import (
     IoTtalk_URL, device_model, device_name, device_addr, username,
     idf_list, odf_list,
-    webServerURL, webServerPort,
-    manageServerURL, manageServerPort)
+    webServerURL, webServerPort)
 
 import qrcode
 import json
-import requests
 import threading
-import sys
 import time
 
 connection_sock = None  # socket connection identification
@@ -292,6 +289,12 @@ def IoT_connect():
 @app.route("/", methods=['GET'], strict_slashes=False)
 def index():
     return render_template("homepage.html")
+
+@app.route("/test", methods=['GET'], strict_slashes=False)
+def test():
+    a = '{{df_name}} = 0'
+
+    return render_template_string(a, df_name='a')
 
 @socketio.on("loading")
 def loading_handler(data):
