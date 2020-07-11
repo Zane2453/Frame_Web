@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from config import dbRoute
+from config import env_config
 
 Base = declarative_base()
 
@@ -41,7 +41,7 @@ def connect():
     global engine
     if engine:
         return
-    engine = create_engine(f'sqlite:///{dbRoute}/portraitguess.sqlite')
+    engine = create_engine(f'sqlite:///{env_config.dbRoute}/portraitguess.sqlite')
     Base.metadata.create_all(engine)
 
 def get_session():

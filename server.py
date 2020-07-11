@@ -5,10 +5,7 @@ from flask_socketio import SocketIO
 from flask_bootstrap import Bootstrap
 
 from iottalkpy import dan
-from config import (
-    IoTtalk_URL, device_model, device_name, device_addr, username, pwd,
-    idf_list, odf_list,
-    webServerURL, webServerPort)
+from config import env_config
 
 import json
 import threading
@@ -178,17 +175,17 @@ def on_deregister():
 def IoT_connect():
     ''' IoTtalk connection '''
     context = dan.register(
-        IoTtalk_URL,
+        env_config.IoTtalk_URL,
         on_signal=on_signal,
         on_data=on_data,
-        idf_list=idf_list,
-        odf_list=odf_list,
+        idf_list=env_config.idf_list,
+        odf_list=env_config.odf_list,
         accept_protos=['mqtt'],
-        name=device_name,
-        id_=device_addr,
+        name=env_config.device_name,
+        id_=env_config.device_addr,
         profile={
-            'model': device_model,
-            'u_name': username
+            'model': env_config.device_model,
+            'u_name': env_config.username
         },
         on_register=on_register,
         on_deregister=on_deregister
@@ -217,7 +214,7 @@ def loading_handler(data):
 
 if __name__ == "__main__":
     ''' create target URL's QR Code '''
-    genQRimg(f"{webServerURL}:{webServerPort}/game")
+    genQRimg(f"{env_config.webServerURL}:{env_config.webServerPort}/game")
     print('[sys] Create QR Code Successfully')
 
     t = threading.Thread(target=IoT_connect, daemon=True)
