@@ -6,3 +6,4 @@ requests==2.21.0
 qrcode==6.1
 Image==1.5.27
 iottalk-py==2.2.0
+git+ssh://git@gitlab.com/IoTtalk/ccmapi-py.git

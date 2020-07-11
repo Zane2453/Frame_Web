@@ -3,6 +3,7 @@ device_model = 'PortraitGuess'
 device_name = 'Zane_Test'
 device_addr = 'd26c2fcc-15ef-4c75-a968-d36e8b21e138'
 username = 'iottalk'
+pwd = 'iot2019'
 
 idf_list = [
     ['PlayAck-I', ['string']]

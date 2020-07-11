@@ -27,6 +27,7 @@ There is one part of FrameTalk system written in Web Mode: GameModule.
 1. Set CCM server URL
     ```python
     from ccmapi.v0.config import config as ccm_config
+    
     ccm_config.api_url ='<path to IoTtalk server>/api/v0'
     ```
 2. User Login
@@ -42,7 +43,7 @@ There is one part of FrameTalk system written in Web Mode: GameModule.
     
     userid, cookie = api.account.login('username', pw, session=session)
     ```
-3. IoTtalk Project
+3. IoTtalk Project API
     ```python
     # Get All Project Information
     api.project.get(session=session)
@@ -65,8 +66,8 @@ There is one part of FrameTalk system written in Web Mode: GameModule.
 4. Device Binding API
     ```python
     # DA Binding
-    api.device.bind(project_id, device_object_id, device_id)
+    api.device.bind(project_id, device_object_id, device_id, session=session)
     
     # DA Unbinding
-    api.device.unbind(project_id, device_object_id)
+    api.device.unbind(project_id, device_object_id, session=session)
     ```
