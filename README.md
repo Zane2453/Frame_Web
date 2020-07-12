@@ -28,9 +28,9 @@ There is one part of FrameTalk system written in Web Mode: GameModule.
     ```python
     from ccmapi.v0.config import config as ccm_config
     
-    ccm_config.api_url ='<path to IoTtalk server>/api/v0'
+    ccm_config.api_url = '<path to IoTtalk server>/api/v0'
     ```
-2. User Login
+2. IoTtalk User Login API
     ```python
     import ccmapi.v0 as api
     
@@ -61,9 +61,25 @@ There is one part of FrameTalk system written in Web Mode: GameModule.
     api.project.on(project_id, session=session)
    
     # Shut Down Project
-    api.project.off(project_id, session=session))
+    api.project.off(project_id, session=session)
     ```
-4. Device Binding API
+4. IoTtalk DeviceObject API
+    ```python
+    # Create DeviceObject
+    api.deviceobject.create(project_id, device_model_name, device_feature_list, session=session)
+    
+    # Get DeviceObject Information
+    api.deviceobject.get(project_id, device_object_id, session=session)
+   
+   # Delete DeviceObject 在 CCM API package 中還未封裝
+    ```
+5. IoTtalk NetworkApplication API
+    ```python
+    # Create NetworkApplication
+    # 此 "join" 參數為  a list of "(device_object_id, device_feature_id or name)" pair
+    api.networkapplication.create(project_id, joins, session=session)
+    ```
+6. IoTtalk Device Binding API
     ```python
     # DA Binding
     api.device.bind(project_id, device_object_id, device_id, session=session)
