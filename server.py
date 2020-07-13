@@ -1,223 +1,100 @@
 #!/usr/bin/env python3
 from flask import Flask
-from flask import render_template, render_template_string
-from flask_socketio import SocketIO
+from flask import render_template, render_template_string, request
+from flask_socketio import SocketIO, emit
 from flask_bootstrap import Bootstrap
 
 from iottalkpy import dan
+from ccmapi.v0.config import config as ccm_config
+import ccmapi.v0 as api
 from config import env_config
 
-import json
-import threading
-import time
+import json, threading, time, requests, uuid
 
 from genQRcode import genQRimg
 import query
-
-connection_sock = None  # socket connection identification
-_flags = {} # represent df state
-end_game = False
-player_uuid = None
-play_mode = None # 0: guess; 1: shake
+import utlis
 
 ''' SocketIO data '''
 signal_type = None
 status = None
+
+''' Current Existing Frame '''
+Frame = {}
 
 ''' Initialize Flask '''
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 socketio = SocketIO(app)
 
-''' IoTtalk data function '''
-def push_PlayAck_I(data):
-    global _flags
-    if(_flags.get("PlayAck-I")):
-        dan.log("[da] push PlayAck-I ", data)
-        dan.push("PlayAck-I", data)
-
-def cmd2socket(msg):
-    global socketio
-    print("[SocketIO] send msg ", msg)
-    socketio.emit("frame", msg)
-
-def socket_loading_handler():
-    global signal_type, status
-
-    while True:
-        if (signal_type == "load"):
-            push_PlayAck_I(json.dumps({
-                "op": "Loading",
-                "data": status
-            }))
-            if (status == "finish"):
-                break
-        elif (signal_type == "display"):
-            push_PlayAck_I(json.dumps({
-                "op": "DisplayFinish",
-                "data": "true"
-            }))
-            break
-
-''' IoTtalk data handler '''
-def on_data(odf_name, data):
-    global player_uuid, end_game, play_mode
-    dan.log.info(f"[da] {odf_name}: {data}")
-
-    if (odf_name == "Mode"):
-        data = json.loads(data[0])
-        if (data["op"] == "PlayReq"):
-            # save the first uuid until leave or timeout
-            if (player_uuid == None or player_uuid == data["uuid"]):
-                print(data['uuid'])
-                # modified 2019/12/03
-                #expired_time = requests.get(f"{manageServerURL}:{manageServerPort}/getExpiredTime").json()
-
-                player_uuid = data["uuid"]
-                play_mode = None
-                push_PlayAck_I(json.dumps({
-                    "op": "PlayRes",
-                    "uuid": data["uuid"],
-                    "play_uuid": player_uuid,
-                    #"expired_time": expired_time,
-                    "groupList": query.get_group_list()
-                }))
-                # let processing show "play"
-                cmd2socket("s,0;")
-            else:
-                push_PlayAck_I(json.dumps({
-                    "op": "PlayRes",
-                    "uuid": data["uuid"],
-                    "play_uuid": player_uuid
-                }))
-        elif (data["op"] == "Leave"):
-            print(player_uuid, data['uuid'])
-            if (player_uuid == data["uuid"]):
-                player_uuid = None
-                play_mode = None
-                # let processing show "see you"
-                cmd2socket("q,0;")
-
-    elif (odf_name == "Name-O"):
-        data = json.loads(data[0])
-        if (data["type"] == "mode"):
-            if (player_uuid == None):
-                return True
-            # keep game mode
-            play_mode = data["mode"]
-            # show group page
-            cmd2socket("g,0;")
-        elif (data["type"] == "group"):
-            if (player_uuid == None):
-                return True
-            push_PlayAck_I(json.dumps({
-                "op": "MemberRes",
-                "data": query.get_member_list(data["id"])
-            }))
-            # check play_mode, display diff page
-            if (play_mode == 0):
-                pass
-            elif (play_mode == 1):
-                cmd2socket("m,0;")
-        elif (data["type"] == "answer"):
-            if (player_uuid == None):
-                return True
-            # this game is start
-            end_game = False
-            # query DB for getting answer pictures
-            cmd2socket(query.get_answer_pic(data["id"]))
-            # start loading, and when loading is finished, push_PlayAck_I
-            socket_loading_handler()
-        elif (data["type"] == "weather"):
-            # weather DA
-            weather = data["data"]
-            # send weather to processing
-            cmd2socket("w," + weather + ";")
-    elif (odf_name == "Forward"):
-        if (player_uuid == None or end_game == True or data[0] == 0):
-            return True
-        # let processing display the next picture
-        cmd2socket("f,0;")
-    elif (odf_name == "End"):
-        if (player_uuid == None or end_game == True or data[0] == 0):
-            return True
-        # this game is over
-        end_game = True
-        # let processing display the remained pictures
-        cmd2socket("e,0;")
-        # start loading, and when display is finished, push_PlayAck_I
-        socket_loading_handler()
-    return True
-    #socketio.emit("frame", "test")
-
-def on_signal(signal, df_list):
-    global _flags
-    dan.log.info('[cmd] %s, %s', signal, df_list)
-    if 'CONNECT' == signal:
-        for df_name in df_list:
-            _flags[df_name] = True
-    elif 'DISCONNECT' == signal:
-        for df_name in df_list:
-            _flags[df_name] = False
-    elif 'SUSPEND' == signal:
-        pass    # Not use
-    elif 'RESUME' == signal:
-        pass    # Not use
-    return True
-
-def on_register():
-    dan.log.info('[da] register successfully')
-
-def on_deregister():
-    dan.log.info('[da] register fail')
-
-''' IoTtalk connection handler '''
-def IoT_connect():
-    ''' IoTtalk connection '''
-    context = dan.register(
-        env_config.IoTtalk_URL,
-        on_signal=on_signal,
-        on_data=on_data,
-        idf_list=env_config.idf_list,
-        odf_list=env_config.odf_list,
-        accept_protos=['mqtt'],
-        name=env_config.device_name,
-        id_=env_config.device_addr,
-        profile={
-            'model': env_config.device_model,
-            'u_name': env_config.username
-        },
-        on_register=on_register,
-        on_deregister=on_deregister
-    )
-
-    while 1:
-        time.sleep(0.2)
-
+''' Server Route '''
 @app.route("/", methods=['GET'], strict_slashes=False)
 def index():
-    return render_template("homepage.html")
+    #p_id, ido_id, odo_id, dev_name = utlis.create_frame(len(Frame)+1)
+    p_id, ido_id, odo_id = 17, 51, 52
+    dev_name = 'Frame_' + str(len(Frame)+1)
+    return render_template("homepage.html",
+                           csm_url=env_config.csm_api,
+                           dm_name=env_config.odm['name'],
+                           idf_list=env_config.odm['idf_list'],
+                           odf_list=env_config.odm['odf_list'],
+                           p_id=p_id,
+                           ido_id=ido_id,
+                           odo_id=odo_id,
+                           dev_name=dev_name)
 
-@app.route("/test", methods=['GET'], strict_slashes=False)
-def test():
-    a = '{{df_name}} = 0'
+@app.route('/bind/<string:s_id>', methods=['POST'], strict_slashes=False)
+def bind(s_id):
+    p_id = int(Frame[s_id]['p_id'])
+    do_id = int(Frame[s_id]['do_id'])
+    d_id = Frame[s_id]['d_id']
+    utlis.bind_frame(p_id, do_id, d_id)
+    return "Success Binding"
 
-    return render_template_string(a, df_name='a')
+@app.route('/group', methods=['GET'], strict_slashes=False)
+def getGroup():
+    group_list = query.get_group_list()
+    return group_list
 
-@socketio.on("loading")
+@socketio.on('START')
+def onConnect(msg):
+    currentSocketId = request.sid
+    current_mac = gen_uuid()
+    Frame[currentSocketId] = {
+        'd_id': current_mac,
+        'p_id': msg['p_id'],
+        'do_id': msg['do_id']
+    }
+    emit('ID', {
+        'key': currentSocketId,
+        'id': current_mac
+    })
+    print(f'Add Socket {currentSocketId}')
+
+@socketio.on('END')
+def offConnect():
+    currentSocketId = request.sid
+    del Frame[currentSocketId]
+    print(f'Remove Socket {currentSocketId}')
+
+'''@socketio.on("loading")
 def loading_handler(data):
     global signal_type, status
 
     signal_type = data.split(":")[0]
     status = data.split(":")[1]
-    print("[SocketIO] receive data ", signal_type, status)
+    print("[SocketIO] receive data ", signal_type, status)'''
+
+def gen_uuid():
+    mac = str(uuid.uuid4())
+    return mac
 
 if __name__ == "__main__":
     ''' create target URL's QR Code '''
-    genQRimg(f"{env_config.webServerURL}:{env_config.webServerPort}/game")
-    print('[sys] Create QR Code Successfully')
+    '''genQRimg(f"{env_config.webServerURL}:{env_config.webServerPort}/game")
+    print('[sys] Create QR Code Successfully')'''
 
-    t = threading.Thread(target=IoT_connect, daemon=True)
-    t.start()
+    '''t = threading.Thread(target=IoT_connect, daemon=True)
+    t.start()'''
 
-    socketio.run(app, host='127.0.0.1', port='5000')
+    socketio.run(app, host=env_config.host, port=env_config.port)

@@ -1,27 +1,43 @@
-class EnvironmentConfig():
-    IoTtalk_URL = 'https://iottalk2.tw/csm'
-    device_model = 'PortraitGuess'
-    device_name = 'Zane_Test'
-    device_addr = 'd26c2fcc-15ef-4c75-a968-d36e8b21e138'
+class Config(object):
+    host = 'localhost'
+    port = '5000'
+    csm_api = 'https://iottalk2.tw/csm'
+    ccm_api = 'https://iottalk2.tw/api/v0'
+    idm = {
+        'name': 'PGSmartphone',
+        'idf_list': [
+            ['Acceleration', ['int', 'int', 'int']],
+            ['Correct', ['int']],
+            ['Name-I', ['string']],
+            ['Play-I', ['string']],
+            ['Wrong', ['int']]
+        ],
+        'odf_list': [
+            ['PlayAck-O', ['string']]
+        ],
+    }
+    odm = {
+        'name' : 'PortraitGuess',
+        'idf_list' : [
+            ['PlayAck-I', ['string']]
+        ],
+        'odf_list' : [
+            ['End', ['int']],
+            ['Forward', ['int']],
+            ['Mode', ['string']],
+            ['Name-O', ['string']]
+        ],
+    }
     username = 'iottalk'
     pwd = 'iot2019'
-
-    idf_list = [
-        ['PlayAck-I', ['string']]
-    ]
-    odf_list = [
-        ['End', ['int']],
-        ['Forward', ['int']],
-        ['Mode', ['string']],
-        ['Name-O', ['string']]
-    ]
-
-    webServerURL = 'http://localhost'
-    webServerPort = 7788
-
-    manageServerURL = 'http://localhost'
-    manageServerPort = 5566
-
+    webServer = {
+        'url': 'http://localhost',
+        'port': 7788
+    }
+    manageServer = {
+        'url': 'http://localhost',
+        'port': 5566
+    }
     dbRoute = '/Users/zane/FrameTalk/ManagementModule/server'
 
-env_config = EnvironmentConfig()
+env_config = Config()

@@ -87,3 +87,6 @@ There is one part of FrameTalk system written in Web Mode: GameModule.
     # DA Unbinding
     api.device.unbind(project_id, device_object_id, session=session)
     ```
+## Reference
+- https://flask-socketio.readthedocs.io/en/latest/
+

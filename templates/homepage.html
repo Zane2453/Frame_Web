@@ -4,9 +4,27 @@
 {{ super() }}
 <link href="{{ url_for('static', filename='css/homepage.css') }}" rel="stylesheet">
 <script type="text/javascript" src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://iottalk.github.io/iottalk-js/dan2.js"></script>
+<script>
+  var dm_name = "{{ dm_name }}";
+  var dev_name = "{{ dev_name }}";
+  var idf_list = {{ idf_list | tojson }};
+  var odf_list = {{ odf_list | tojson }};
+  var p_id = "{{ p_id }}";
+  var ido_id = "{{ ido_id }}";
+  var odo_id = "{{ odo_id }}";
+  var urls = {
+    csm_url: '{{ csm_url }}',
+    frame_bind: function(id) {
+      return '{{ url_for("bind", s_id="") }}' + id
+    },
+  };
+</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/dai.js') }}"></script>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
-<script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
 {% endblock %}
