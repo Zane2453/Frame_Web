@@ -87,6 +87,13 @@ There is one part of FrameTalk system written in Web Mode: GameModule.
     # DA Unbinding
     api.device.unbind(project_id, device_object_id, session=session)
     ```
+
+## AG CCM API Example
+```python
+import requests, json
+requests.post('http://iottalk2.haohao.in:8080/autogen/ccm_api', data={"username": "iottalk","password":"iot2019","api_name": "project.create", "payload": json.dumps({"p_name":"Test_3"})})
+```   
+
 ## Reference
 - https://flask-socketio.readthedocs.io/en/latest/
 - https://oawan.me/2016/javascript-json-stringify-and-parse/

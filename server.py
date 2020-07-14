@@ -82,6 +82,17 @@ def offConnect():
     del Frame[currentSocketId]
     print(f'Remove Socket {currentSocketId}')
 
+@socketio.on('disconnect')
+def detect_disconnect():
+    currentSocketId = request.sid
+    if currentSocketId in Frame:
+        p_id = Frame[currentSocketId]['p_id']
+        do_id = Frame[currentSocketId]['do_id']
+        utlis.unbind_frame(p_id, do_id)
+        #utlis.delete_frame(p_id)
+        del Frame[currentSocketId]
+    print(f'Socket {currentSocketId} Disconnect')
+
 def gen_uuid():
     mac = str(uuid.uuid4())
     return mac
