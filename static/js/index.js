@@ -26,7 +26,7 @@ $(window).on('beforeunload', function (e) {
 function MsgHandler(dest, data){
     if(dest == 'Processing'){
         // TODO: Implement the Processing Side Function
-        Processing(data);
+        sendMsgFrame(data);
     } else{
         signal_type = data.split(":")[0];
         status = data.split(":")[1];
@@ -46,7 +46,7 @@ function MsgHandler(dest, data){
 }
 
 // TODO: Modify the Processing Side Function
-function Processing(data){
+function sendMsgFrame(data){
     signal_type = data.split(",")[0];
     if(signal_type == 'p'){
         MsgHandler('DAI', "load:50%");
