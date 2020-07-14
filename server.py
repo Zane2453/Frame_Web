@@ -1,25 +1,16 @@
 #!/usr/bin/env python3
 from flask import Flask
-from flask import render_template, render_template_string, request
+from flask import render_template, jsonify, request
 from flask_socketio import SocketIO, emit
 from flask_bootstrap import Bootstrap
+import uuid
 
-from iottalkpy import dan
-from ccmapi.v0.config import config as ccm_config
-import ccmapi.v0 as api
 from config import env_config
 
-import json, threading, time, requests, uuid
-
-from genQRcode import genQRimg
 import query
 import utlis
 
-''' SocketIO data '''
-signal_type = None
-status = None
-
-''' Current Existing Frame '''
+''' Current Existing Wireframe '''
 Frame = {}
 
 ''' Initialize Flask '''
@@ -54,7 +45,17 @@ def bind(s_id):
 @app.route('/group', methods=['GET'], strict_slashes=False)
 def getGroup():
     group_list = query.get_group_list()
-    return group_list
+    return jsonify({'group_list': group_list})
+
+@app.route('/group/<string:g_id>', methods=['GET'], strict_slashes=False)
+def getMember(g_id):
+    member_list = query.get_member_list(g_id)
+    return jsonify({'member_list': member_list})
+
+@app.route('/member/<string:m_id>', methods=['GET'], strict_slashes=False)
+def getPicture(m_id):
+    picture_list = query.get_answer_pic(m_id)
+    return jsonify({'picture_list': picture_list})
 
 @socketio.on('START')
 def onConnect(msg):
@@ -74,27 +75,16 @@ def onConnect(msg):
 @socketio.on('END')
 def offConnect():
     currentSocketId = request.sid
+    p_id = Frame[currentSocketId]['p_id']
+    do_id = Frame[currentSocketId]['do_id']
+    utlis.unbind_frame(p_id, do_id)
+    #utlis.delete_frame(p_id)
     del Frame[currentSocketId]
     print(f'Remove Socket {currentSocketId}')
-
-'''@socketio.on("loading")
-def loading_handler(data):
-    global signal_type, status
-
-    signal_type = data.split(":")[0]
-    status = data.split(":")[1]
-    print("[SocketIO] receive data ", signal_type, status)'''
 
 def gen_uuid():
     mac = str(uuid.uuid4())
     return mac
 
 if __name__ == "__main__":
-    ''' create target URL's QR Code '''
-    '''genQRimg(f"{env_config.webServerURL}:{env_config.webServerPort}/game")
-    print('[sys] Create QR Code Successfully')'''
-
-    '''t = threading.Thread(target=IoT_connect, daemon=True)
-    t.start()'''
-
     socketio.run(app, host=env_config.host, port=env_config.port)

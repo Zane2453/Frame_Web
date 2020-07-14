@@ -25,5 +25,11 @@ def create_frame(idx):
 
     return p_id, ido_id, odo_id, dev_name
 
+def delete_frame(p_id):
+    api.project.delete(p_id, session=session)
+
 def bind_frame(p_id, do_id, d_id):
     api.device.bind(p_id, do_id, d_id, session=session)
+
+def unbind_frame(p_id, do_id):
+    api.device.unbind(p_id, do_id, session=session)

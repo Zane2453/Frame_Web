@@ -1,5 +1,4 @@
-$.ajaxSetup({async:false});
-
+//$.ajaxSetup({async:false});
 var url = 'http://localhost';
 var port = '5000';
 var socketIo = io.connect(url + ':' + port);
@@ -17,36 +16,42 @@ $(function(){
         key = curID.key;
         initial();
     });
-    socketIo.on('GROUP', (group)=>{
-        push_PlayAck_I(json.dumps({
-            "op": "PlayRes",
-            "uuid": play_uuid["uuid"],
-            "play_uuid": player_uuid
-        }))
-    });
 });
-
-var _wasPageCleanedUp = false;
-function pageCleanup()
-{
-    if (!_wasPageCleanedUp)
-    {
-        /*$.ajax({
-            type: 'GET',
-            //async: true,
-            url: 'http://127.0.0.1:5000/test',
-            success: function ()
-            {
-                _wasPageCleanedUp = true;
-            }
-        });*/
-        dan2.deregister();
-        _wasPageCleanedUp = true;
-    }
-}
 
 $(window).on('beforeunload', function (e) {
     //dan2.deregister();
-    //pageCleanup();
     socketIo.emit('END');
 });
+
+function MsgHandler(dest, data){
+    if(dest == 'Processing'){
+        // TODO: Implement the Processing Side Function
+        Processing(data);
+    } else{
+        signal_type = data.split(":")[0];
+        status = data.split(":")[1];
+        console.log("[processing] recv data ", signal_type, status);
+        if(signal_type == "load"){
+            push("PlayAck-I", JSON.stringify({
+                "op": "Loading",
+                "data": status
+            }))
+        } else if(signal_type == "display"){
+            push("PlayAck-I", JSON.stringify({
+                "op": "DisplayFinish",
+                "data": "true"
+            }));
+        }
+    }
+}
+
+// TODO: Modify the Processing Side Function
+function Processing(data){
+    signal_type = data.split(",")[0];
+    if(signal_type == 'p'){
+        MsgHandler('DAI', "load:50%");
+        MsgHandler('DAI', "load:finish");
+    } else if(signal_type == 'e'){
+        MsgHandler('DAI', "display:finish");
+    }
+}

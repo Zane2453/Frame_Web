@@ -34,115 +34,133 @@ function on_data(odf_name, data) {
     console.log("[da] [data] ", odf_name, data);
     if(odf_name == "Mode"){
         var data = JSON.parse(data[0]);
-        console.log(data);
+        //console.log(data);
         if(data['op'] == 'PlayReq'){
             // save the first uuid until leave or timeout
-            console.log(data['uuid']);
+            if(player_uuid == null || player_uuid == data["uuid"]){
+                console.log(data['uuid']);
+                // TODO: modified this line to call ManagementModule's API
+                expired_time = 50;
 
-            expired_time = 50;
+                player_uuid = data["uuid"];
+                play_mode = null;
 
-            player_uuid = data["uuid"];
-            play_mode = null;
-            socketIo.emit('GROUP');
-        }
-    }
-        /*data = json.loads(data[0])
-        if(data["op"] == "PlayReq"):
-            # save the first uuid until leave or timeout
-            # [TODO] lock here
-            if(player_uuid == None or player_uuid == data["uuid"]):
-                print(data['uuid'])
-                # start countdown
-                # rp_timer.restart()
-                # modified 2019/12/03
-                expired_time = requests.get(f"{manageServerURL}:{manageServerPort}/getExpiredTime").json()
-
-                player_uuid = data["uuid"]
-                play_mode = None
-                push_PlayAck_I(json.dumps({
-                    "op": "PlayRes",
-                    "uuid": data["uuid"],
-                    "play_uuid": player_uuid,
-                    "expired_time": expired_time,
-                    "groupList": query.get_group_list()
-                }))
-                # let processing show "play"
-                cmd2processing("s,0;")
-            else:
-                push_PlayAck_I(json.dumps({
+                $.ajax({
+                    type: 'GET',
+                    //async: true,
+                    url: location.origin + '/group',
+                    error: function(e) {
+                        console.log(e);
+                    },
+                    success: function (groupList) {
+                        console.log(groupList);
+                        push("PlayAck-I", JSON.stringify({
+                            "op": "PlayRes",
+                            "uuid": data["uuid"],
+                            "play_uuid": player_uuid,
+                            "expired_time": expired_time,
+                            "groupList": groupList['group_list']
+                        }));
+                        // let processing show "play"
+                        MsgHandler('Processing', "s,0;");
+                    }
+                });
+            } else{
+                push("PlayAck-I", JSON.stringify({
                     "op": "PlayRes",
                     "uuid": data["uuid"],
                     "play_uuid": player_uuid
-                }))
-        elif(data["op"] == "Leave"):
-            # [TODO] lock here
-            print(player_uuid, data['uuid'])
-            if(player_uuid == data["uuid"]):
-                player_uuid = None
-                play_mode = None
-                # let processing show "see you"
-                cmd2processing("q,0;")
-                # clear countdown
-                # rp_timer.cancel()
-    elif(odf_name == "Name-O"):
-        data = json.loads(data[0])
-        if(data["type"] == "mode"):
-            if(player_uuid == None):
-                return True
-            # start countdown
-            # rp_timer.restart()
-            # keep game mode
-            play_mode = data["mode"]
-            # show group page
-            cmd2processing("g,0;")
-        elif(data["type"] == "group"):
-            if(player_uuid == None):
-                return True
-            # start countdown
-            # rp_timer.restart()
-            push_PlayAck_I(json.dumps({
-                "op": "MemberRes",
-                "data": query.get_member_list(data["id"])
-            }))
-            # check play_mode, display diff page
-            if(play_mode == 0):
-                pass
-            elif(play_mode == 1):
-                cmd2processing("m,0;")
-        elif(data["type"] == "answer"):
-            if(player_uuid == None):
-                return True
-            # this game is start
-            end_game = False
-            # start countdown
-            # rp_timer.restart()
-            # query DB for getting answer pictures
-            cmd2processing(query.get_answer_pic(data["id"]))
-            # start loading, and when loading is finished, push_PlayAck_I
-            processing_loading_handler()
-        elif(data["type"] == "weather"):
-            # weather DA
-            weather = data["data"]
-            # send weather to processing
-            cmd2processing("w," + weather + ";")
-    elif(odf_name == "Forward"):
-        if(player_uuid == None or end_game == True or data[0] == 0):
-            return True
-        # start countdown
-        # rp_timer.restart()
-        # let processing display the next picture
-        cmd2processing("f,0;")
-    elif(odf_name == "End"):
-        if(player_uuid == None or end_game == True or data[0] == 0):
-            return True
-        # this game is over
-        end_game = True
-        # start countdown
-        # rp_timer.restart()
-        # let processing display the remained pictures
-        cmd2processing("e,0;")
-        # start loading, and when display is finished, push_PlayAck_I
-        processing_loading_handler()*/
+                }));
+            }
+        } else if(data["op"] == "Leave"){
+            console.log(player_uuid, data['uuid']);
+            if(player_uuid == data["uuid"]){
+                player_uuid = null;
+                play_mode = null;
+                // let processing show "see you"
+                MsgHandler('Processing', "q,0;");
+            }
+        }
+    } else if(odf_name == 'Name-O'){
+        var data = JSON.parse(data[0]);
+        if(data["type"] == "mode"){
+            if(player_uuid == null)
+                return true;
+
+            // keep game mode
+            play_mode = data["mode"];
+            // show group page
+            MsgHandler('Processing', "g,0;");
+        } else if(data["type"] == "group"){
+            if(player_uuid == null)
+                return true;
+
+            $.ajax({
+                type: 'GET',
+                //async: true,
+                url: location.origin + '/group/' + String(data["id"]),
+                error: function(e) {
+                    console.log(e);
+                },
+                success: function (memberList) {
+                    console.log(memberList);
+                    push("PlayAck-I", JSON.stringify({
+                        "op": "MemberRes",
+                        "data": memberList['member_list']
+                    }));
+
+                    // check play_mode, display diff page
+                    if(play_mode == 0){
+                        //pass
+                    } else if(play_mode == 1){
+                        MsgHandler('Processing', "m,0;");
+                    }
+                }
+            });
+        } else if(data["type"] == "answer"){
+            if(player_uuid == null)
+                return true;
+
+            // # this game is start
+            end_game = false;
+
+            // query DB for getting answer pictures
+            $.ajax({
+                type: 'GET',
+                //async: true,
+                url: location.origin + '/member/' + String(data["id"]),
+                error: function(e) {
+                    console.log(e);
+                },
+                success: function (pictureList) {
+                    console.log(pictureList);
+                    MsgHandler('Processing', pictureList['picture_list']);
+                    // start loading, and when loading is finished, push_PlayAck_I
+                }
+            });
+        } else if(data["type"] == "weather"){
+            // weather DA
+            var weather = data["data"];
+            // send weather to processing
+            MsgHandler('Processing', "w," + weather + ";");
+        }
+    } else if(odf_name == 'Forward'){
+        if(player_uuid == null || end_game == true || data[0] == 0)
+            return true;
+
+        // let processing display the next picture
+        MsgHandler('Processing', "f,0;");
+    } else if(odf_name == 'End'){
+        if(player_uuid == null || end_game == true || data[0] == 0)
+            return true;
+
+        // this game is over
+        end_game = true;
+
+        // let processing display the remained pictures
+        MsgHandler('Processing', "e,0;");
+        // start loading, and when display is finished, push_PlayAck_I
+    }
     return true;
 }
 
@@ -158,4 +176,11 @@ function init_callback(result) {
     .fail(function() {
         console.log('device binding failed')
     })
+}
+
+function push(idf_name, data) {
+    console.log('[da] [data] PlayAck-I', data);
+    if (!(data instanceof Array))
+        data = [data];
+    dan2.push(idf_name, data);
 }

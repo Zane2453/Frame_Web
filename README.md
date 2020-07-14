@@ -89,4 +89,9 @@ There is one part of FrameTalk system written in Web Mode: GameModule.
     ```
 ## Reference
 - https://flask-socketio.readthedocs.io/en/latest/
+- https://oawan.me/2016/javascript-json-stringify-and-parse/
+- https://stackoverflow.com/questions/34009296/using-sqlalchemy-session-from-flask-raises-sqlite-objects-created-in-a-thread-c
+- https://www.w3school.com.cn/jsref/jsref_split.asp
+
+
 

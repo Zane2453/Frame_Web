@@ -41,7 +41,7 @@ def connect():
     global engine
     if engine:
         return
-    engine = create_engine(f'sqlite:///{env_config.dbRoute}/portraitguess.sqlite')
+    engine = create_engine(f'sqlite:///{env_config.dbRoute}/portraitguess.sqlite?check_same_thread=False')
     Base.metadata.create_all(engine)
 
 def get_session():
