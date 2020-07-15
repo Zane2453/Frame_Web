@@ -38,6 +38,7 @@ class Config(object):
         'url': 'http://localhost',
         'port': 5566
     }
+    # TODO: Reset the Path of Frame DB
     dbRoute = '/Users/zane/FrameTalk/ManagementModule/server'
 
 env_config = Config()

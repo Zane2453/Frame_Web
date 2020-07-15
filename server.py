@@ -21,9 +21,9 @@ socketio = SocketIO(app)
 ''' Server Route '''
 @app.route("/", methods=['GET'], strict_slashes=False)
 def index():
-    p_id, ido_id, odo_id, dev_name = utlis.create_frame(len(Frame)+1)
-    '''p_id, ido_id, odo_id = 17, 51, 52
-    dev_name = 'Frame_' + str(len(Frame)+1)'''
+    #p_id, ido_id, odo_id, dev_name = utlis.create_frame(len(Frame)+1)
+    p_id, ido_id, odo_id = 17, 51, 52
+    dev_name = 'Frame_' + str(len(Frame)+1)
     return render_template("homepage.html",
                            csm_url=env_config.csm_api,
                            dm_name=env_config.odm['name'],
@@ -78,7 +78,7 @@ def offConnect():
     p_id = Frame[currentSocketId]['p_id']
     do_id = Frame[currentSocketId]['do_id']
     utlis.unbind_frame(p_id, do_id)
-    utlis.delete_frame(p_id)
+    #utlis.delete_frame(p_id)
     del Frame[currentSocketId]
     print(f'Remove Socket {currentSocketId}')
 
