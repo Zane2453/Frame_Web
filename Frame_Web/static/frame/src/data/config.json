@@ -1,0 +1,12 @@
+{
+  "weather_db_path": [
+    "./data/weather/sunny_d/1",
+    "./data/weather/cloudy_d/1",
+    "./data/weather/brokenclouds_d/1",
+    "./data/weather/rainy_d/1",
+    "./data/weather/showerrain_d/1"
+  ],
+  "qr_path": "./data/qrcode.png",
+  "portrait_images_path": "http://140.113.199.211:5566/img/",
+  "ws_path": "ws://140.113.199.211:8000"
+}

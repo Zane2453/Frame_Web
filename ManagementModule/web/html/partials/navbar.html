@@ -1,0 +1,33 @@
+<script type="text/javascript" src="/js/navbar.js"></script>
+
+<% var role = isadmin ? 'manage' : 'user' %>
+<nav id="navbar" class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="<% if(isadmin){ %>/manage<% }else{ %>/user<% } %>">FrameTalk</a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/<%= role %>/upload">上傳檔案</a>
+            </li>
+            <% if(isadmin){ %>
+            <li class="nav-item">
+                <a id="navbar-pending-btn" class="nav-link" href="#">待審檔案</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/<%= role %>/approved">編輯檔案</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbar-group-btn" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">編輯群組</a>
+                <div class="dropdown-menu scroll_dropdown" aria-labelledby="navbar-group-btn" id="dropdown-menu-group">
+                    <a id="dropdown-show-groupModal-btn" href="#" class="dropdown-item">新增</a>
+                    <% for(let i = 0; i < approved_group_list.length; i++){ %>
+                        <a class="dropdown-item" href="/<%= role %>/group/<%= approved_group_list[i].id %>"> <%= approved_group_list[i].name %> </a>
+                    <% } %>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/<%= role %>/display">播放清單</a>
+            </li>
+            <% } %>
+        </ul>
+    </div>
+</nav>

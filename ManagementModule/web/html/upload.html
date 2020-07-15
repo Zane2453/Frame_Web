@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include partials/meta.html %>
+    <script type="text/javascript" src="/js/upload.js"></script>
+</head>
+<body>
+    <% include partials/modal.html %>
+    <% include partials/navbar.html %>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h2 id="title" class="center">上傳檔案</h2>
+            <br>
+            <form id="upload-photos" class="row" method="post" action="/upload_photos" enctype="multipart/form-data">
+                <div class="col-md-8 offset-md-2">
+                    <div class="form-group ">
+                        <h3 class="required">檔案名稱</h3>
+                        <input type="text" id="name" class="form-control" placeholder="ex: 伊麗莎白一世,Elizabeth I" />
+                    </div>
+                    <div class="form-group ">
+                        <h3>描述</h3>
+                        <textarea class="form-control" id="description" rows="2" placeholder="ex: 1533-1603"></textarea>
+                    </div>
+                    <div class="form-group row">
+                        <h3 class="col-md-9">加入群組</h3>
+                        <div class="col-md-3 center">
+                            <input class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" value="選擇" />
+                        </div>
+                        <p class="col-md-12 help-block">預設為不分類</p>
+                    </div>
+                    <div id="collapseExample" class="collapse">
+                        <div class="form-group scroll_card">
+                            <div class="card card-body">
+                                <div id="add_new_group_row" class="form-group row">
+                                    <div class="col-md-6 offset-md-2">
+                                        <input id="new_group_name" class="form-control" type="text" placeholder="ex: 科學家">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input id="set_new_group" type="button" class="btn btn-outline-success" value="新增">
+                                    </div>
+                                </div>
+                                <table id="group_table" class="table table-hover">
+                                    <% for(let i = 0; i < group_list.length; i++){ %>
+                                        <tr>
+                                            <td class='mycheckbox'>
+                                                <input type='checkbox' id='<%= group_list[i].id %>_checkbox' name='group' value='<%= group_list[i].id %>' />
+                                            </td>
+                                            <td>
+                                                <label for='<%= group_list[i].id %>_checkbox'><%= group_list[i].name %></label>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <h3 class="required">上傳圖片</h3>
+                        <p class="help-block">拉動圖片來排序(由左至右，由上至下)</p>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-9">
+                            <input id="upload_file" type="file" name="photos[]" accept=".png,.jpg,.jpeg" multiple="multiple"/>
+                        </div>
+                        <div class="col-md-3 center">
+                            <input class="btn btn-warning" type="submit" value="上傳"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div id="pic_row" >
+                        <div class="row" id="movable_pic_row"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

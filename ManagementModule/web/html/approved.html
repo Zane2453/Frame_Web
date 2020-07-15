@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include partials/meta.html %>
+    <script type="text/javascript" src="/js/approved.js"></script>
+</head>
+<body>
+    <% include partials/modal.html %>
+    <% include partials/navbar.html %>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2 class="center top">編輯檔案</h2>
+            <br>
+            <div class="row">
+                <div class="col-md-3">
+                    <input id="search" type="text" class="form-control" placeholder="Search...">
+                </div>
+                <div class="col-md-3">
+                    <select id="select" class="form-control">
+                        <option group_id="default">不分類</option>
+                        <% for(let i = 0; i < approved_group_list.length; i++){ %>
+                            <option group_id="<%= approved_group_list[i].id %>"><%= approved_group_list[i].name %></option>
+                        <% }%>
+                    </select>
+                </div>
+            </div>
+            <br>
+            <div class="table-responsive">
+                <table id="approved_table" class="table table-hover myborder"></table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

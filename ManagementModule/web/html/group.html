@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include partials/meta.html %>
+    <script type="text/javascript" src="/js/group.js"></script>
+</head>
+<body>
+    <% include partials/modal.html %>
+    <% include partials/navbar.html %>
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group center">
+                        <h2>編輯群組 - <div id="title_group_name" style="display: inline;"></div></h2>
+                        <div id="function_btn_row" class="center">
+                            <button id="show_name_div_btn" class="btn btn-secondary">修改名稱</button>
+                            <button id="show_member_div_btn" class="btn btn-info">編輯成員</button>
+                            <button id="save_as_new_group_btn" class="btn btn-success">另存群組</button>
+                            <button id="group_delete_btn" class="btn btn-danger">刪除群組</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="name_div" style="visibility: hidden;">
+                        <div class="form-group row">
+                            <h4 id="editModal_s_name" class="col-md-12 required">群組名稱</h4>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-7">
+                                <input type="text" id="group_title" class="form-control" placeholder="ex: 科學家" size="40"/>
+                            </div>
+                            <div class="col-md-5">
+                                <button id="update_name_btn" class="btn btn-primary">儲存名稱</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="old_member_div" style="visibility: hidden;">
+                        <div class="form-group row">
+                            <h4 class="col-md-6">群組成員</h4>
+                            <div class="col-md-6" style="text-align: right;">
+                                <button id="save_member_btn" class="btn btn-primary">儲存群組</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover myborder">
+                                <thead>
+                                    <tr class="row">
+                                        <th class="col-md-1 mycheckbox"><input id="delete_all_checkbox" type="checkbox" /></th>
+                                        <th class="col-md-5">檔案名稱</th>
+                                        <th class="col-md-3" style="text-align: right;">
+                                            <button id="delete_member_btn" class="btn btn-outline-danger" style="display: none;">移除成員</button>
+                                        </th>
+                                        <th class="col-md-3" style="text-align: left;">
+                                            <button id="add_member_btn" class="btn btn-outline-primary" style="display: none;">加入成員</buttom>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="groupContent_table" class='groupContent_table'></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="new_member_div" class="col-md-6" style="visibility: hidden;">
+                    <br>
+                    <br>
+                    <div class="form-group">
+                        <h4>選擇欲加入的檔案</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 offset-md-1">
+                            <input id="search" type="text" class="form-control" placeholder="Search...">
+                        </div>
+                        <div class="col-md-4">
+                            <select id="select" class="form-control">
+                                <option group_id="default">不分類</option>
+                                <% for(let i = 0; i < approved_group_list.length; i++){ %>
+                                    <% if(approved_group_list[i].id != group_item.id){ %>
+                                        <option group_id="<%= approved_group_list[i].id %>"><%= approved_group_list[i].name %></option>
+                                    <% } %>
+                                <% }%>
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="table-responsive">
+                        <table class="table table-hover myborder">
+                            <thead>
+                                <tr class="row">
+                                    <th class="col-md-1 mycheckbox"><input id="add_all_checkbox" type="checkbox" /></th>
+                                    <th class="col-md-4">檔案名稱</th>
+                                    <th class="col-md-4">群組</th>
+                                    <th class="col-md-3">
+                                        <!-- <button id="add_member_btn" class="btn btn-outline-primary" style="display: none;">加入成員</buttom> -->
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="candidate_table" class='groupContent_table'></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

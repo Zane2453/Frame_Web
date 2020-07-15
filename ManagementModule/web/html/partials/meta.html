@@ -1,0 +1,20 @@
+<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+<title>畫框管理頁面</title>
+<link rel="stylesheet" href="/css/bootstrap.css">
+<link rel="stylesheet" href="/css/manage.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/utils.js"></script>
+<script type="text/javascript">
+    var group_list = <%- JSON.stringify(group_list) %>;
+    var pending_group_list = <%- JSON.stringify(pending_group_list) %>;
+    var approved_group_list = <%- JSON.stringify(approved_group_list) %>;
+    var group_item= <%- JSON.stringify(group_item) %>;
+    var isadmin = <%- JSON.stringify(isadmin) %>;
+    var role = isadmin ? 'manage' : 'user';
+
+    // modified 2019/9/4
+    var overwrite_id = -1; 
+</script>

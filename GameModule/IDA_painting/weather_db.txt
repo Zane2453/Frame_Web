@@ -1,0 +1,5 @@
+sunny_d
+cloudy_d
+brokenclouds_d
+rainy_d
+showerrain_d

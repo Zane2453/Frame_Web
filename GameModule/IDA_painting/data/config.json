@@ -1,0 +1,5 @@
+{
+  "weather_db_path": "weather_db.txt",
+  "portrait_db_path": "../../ManagementModule/web/img",
+  "qr_path": "data/qrcode.png",
+}

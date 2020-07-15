@@ -1,0 +1,111 @@
+tr {
+    margin-left: 0px !important;
+    margin-left: 0px !important;
+}
+.table-responsive {
+    overflow-x: hidden;
+}
+.myborder {
+    border-top: 2px solid #ccc;
+    border-bottom: 2px solid #ccc;
+}
+.warning {
+    color: red;
+}
+.manually-show-modal {
+    display:block !important;
+    z-index: 1060;
+}
+.my_modal_backdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1055;
+    background-color: #000;
+    opacity: 0.5;
+}
+.preview_img {
+    position: relative;
+}
+.remove_tag {
+   cursor: pointer;
+   position: absolute;
+   top: 0;
+   right: 1em;
+   height: 1em;
+   width: 1em;
+   z-index: 5;
+}
+#pic_row {
+    margin-top: 10px;
+}
+.my_cursor {
+    cursor: pointer;
+}
+.homepage_label {
+    font-size: 20px;
+}
+.scroll_card {
+    max-height: 225px;
+    overflow: overlay;
+}
+.scroll_dropdown {
+    max-height: 450px;
+    overflow: overlay;
+}
+.mycheckbox {
+    text-align: right;
+}
+.approved_table {
+    height: 500px; 
+    overflow-x: hidden;
+    overflow-y: scroll;
+    display:block;
+}
+.display_table {
+    height: 450px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    display: block;
+}
+.groupContent_table {
+    height: 420px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    display:block;
+}
+.group_card_table {
+    height: 320px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    display:block;
+}
+.editModal_group_table {
+    border-top: 2px solid #ccc;
+    border-bottom: 2px solid #ccc;
+    height: 200px;
+    overflow: auto;
+}
+.accordion {
+    border-top: 2px solid #ccc;
+    border-bottom: 2px solid #ccc;
+    height: 550px;
+    overflow: auto;
+}
+.required:after {
+    color: #e32;
+    content: ' *';
+    display:inline;
+}
+.center {
+    text-align: center;
+    margin: auto;
+}
+body {
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    padding-top: 70px; 
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include partials/meta.html %>
+    <script type="text/javascript" src="/js/display.js"></script>
+</head>
+<body>
+    <% include partials/modal.html %>
+    <% include partials/navbar.html %>
+    <div class="row">
+        <div class="col-md-4 offset-md-4">
+            <h2 class="center">選擇播放名單(可多選)</h2>
+            <br>
+            <div class="center">
+                <button id="set_display_btn" class="btn btn-primary">儲存</button>
+            </div>
+            <br>
+            <div class="table-responsive">
+                <table id="display_table" class="table table-hover myborder">
+                    <thead>
+                        <tr class="row">
+                            <th class="col-md-5 mycheckbox"><input type='checkbox' id='checkall' value='checkall'/></th>
+                            <th class="col-md-7">群組名稱</th>
+                        </tr>
+                    </thead>
+                    <tbody class="display_table">
+                        <% for(let i = 0; i < approved_group_list.length; i++){ %>
+                            <tr class='row'>
+                                <% if(approved_group_list[i].status == 1){ %>
+                                    <td class='col-md-5 mycheckbox'>
+                                        <input type='checkbox' id='<%= approved_group_list[i].id %>_display_checkbox' class="group_checkbox" name='display' value='<%= approved_group_list[i].id %>' checked/>
+                                    </td>
+                                <% }else{ %>
+                                    <td class='col-md-5 mycheckbox'>
+                                        <input type='checkbox' id='<%= approved_group_list[i].id %>_display_checkbox' class="group_checkbox" name='display' value='<%= approved_group_list[i].id %>'/>
+                                    </td>
+                                <% } %>
+                                <td class='col-md-7'>
+                                    <label for='<%= approved_group_list[i].id %>_display_checkbox'><%= approved_group_list[i].name %></label>
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
