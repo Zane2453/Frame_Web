@@ -3,6 +3,7 @@ from flask import Flask
 from flask import render_template, jsonify, request
 from flask_socketio import SocketIO, emit
 from flask_bootstrap import Bootstrap
+from flask_cors import cross_origin
 import uuid
 
 from config import env_config
@@ -16,10 +17,11 @@ Frame = {}
 ''' Initialize Flask '''
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins='*')
 
 ''' Server Route '''
 @app.route("/", methods=['GET'], strict_slashes=False)
+@cross_origin()
 def index():
     #p_id, ido_id, odo_id, dev_name = utlis.create_frame(len(Frame)+1)
     p_id, ido_id, odo_id = 17, 51, 52
@@ -35,6 +37,7 @@ def index():
                            dev_name=dev_name)
 
 @app.route('/bind/<string:s_id>', methods=['POST'], strict_slashes=False)
+@cross_origin()
 def bind(s_id):
     p_id = int(Frame[s_id]['p_id'])
     do_id = int(Frame[s_id]['do_id'])
@@ -43,16 +46,19 @@ def bind(s_id):
     return "Success Binding"
 
 @app.route('/group', methods=['GET'], strict_slashes=False)
+@cross_origin()
 def getGroup():
     group_list = query.get_group_list()
     return jsonify({'group_list': group_list})
 
 @app.route('/group/<string:g_id>', methods=['GET'], strict_slashes=False)
+@cross_origin()
 def getMember(g_id):
     member_list = query.get_member_list(g_id)
     return jsonify({'member_list': member_list})
 
 @app.route('/member/<string:m_id>', methods=['GET'], strict_slashes=False)
+@cross_origin()
 def getPicture(m_id):
     picture_list = query.get_answer_pic(m_id)
     return jsonify({'picture_list': picture_list})
