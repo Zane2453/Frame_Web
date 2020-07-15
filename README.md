@@ -99,6 +99,6 @@ requests.post('http://iottalk2.haohao.in:8080/autogen/ccm_api', data={"username"
 - https://oawan.me/2016/javascript-json-stringify-and-parse/
 - https://stackoverflow.com/questions/34009296/using-sqlalchemy-session-from-flask-raises-sqlite-objects-created-in-a-thread-c
 - https://www.w3school.com.cn/jsref/jsref_split.asp
-
+- https://flask-cors.readthedocs.io/en/latest/
 
 

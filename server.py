@@ -43,7 +43,7 @@ def bind(s_id):
     do_id = int(Frame[s_id]['do_id'])
     d_id = Frame[s_id]['d_id']
     utlis.bind_frame(p_id, do_id, d_id)
-    return "Success Binding"
+    return jsonify({"result": "Success Binding"})
 
 @app.route('/group', methods=['GET'], strict_slashes=False)
 @cross_origin()
