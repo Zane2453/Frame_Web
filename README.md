@@ -100,5 +100,6 @@ requests.post('http://iottalk2.haohao.in:8080/autogen/ccm_api', data={"username"
 - https://stackoverflow.com/questions/34009296/using-sqlalchemy-session-from-flask-raises-sqlite-objects-created-in-a-thread-c
 - https://www.w3school.com.cn/jsref/jsref_split.asp
 - https://flask-cors.readthedocs.io/en/latest/
+- https://stackoverflow.com/questions/21765692/flask-render-template-with-path?rq=1
 
 
