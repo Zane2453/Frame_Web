@@ -3,12 +3,36 @@ There is one part of FrameTalk system written in Web Mode: GameModule.
 ## Installation
 - #### Required tools
   - install [python3](https://www.python.org/downloads/)
+  - install [Yarn](https://classic.yarnpkg.com/)
   
 - #### Required python packages
   - for GameModule
     ``` 
     cd FrameTalk_Web
     pip3 install -r requirement.txt
+    ```
+
+- #### Front-End Initial
+  - ```
+    cd frontend
+    yarn install
+    yarn build
+    ```
+    static directory and html templates will be created like below:
+    ```
+    frametalk
+        |_Frame_Web
+            |_static
+            |_templates
+    ```
+
+- #### ManagementModule
+  - DB & images initial:
+    ```
+    cd ManagementModule/web
+    mkdir img
+    cd ../server
+    sudo node init_db.js
     ```
     
 ## Settings

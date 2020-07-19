@@ -7,8 +7,8 @@ var _flags = {},    // represent df state
 
 function initial(){
     var profile = {
-        name: dev_name,
-        dm_name: dm_name,
+        name: configs.dev_name,
+        dm_name: configs.dm_name,
     };
 
     var msg = {
@@ -16,8 +16,8 @@ function initial(){
         on_signal: on_signal,
         on_data: on_data,
         name: profile.name,
-        idf_list: idf_list,
-        odf_list: odf_list,
+        idf_list: configs.idf_list,
+        odf_list: configs.odf_list,
         profile: {model: profile.dm_name},
         accept_protos: ['mqtt'],
     };

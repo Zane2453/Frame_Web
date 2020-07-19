@@ -26,7 +26,7 @@ var expired_time = 50;
 // cors for portraitImages
 const corsOptions = {
     origin: [
-        config.ProcessingWebServer + ':7788',
+        config.ProcessingWebServer + ':5000',
         config.ProcessingWebServer + ':3000',
     ],
     methods: 'GET',

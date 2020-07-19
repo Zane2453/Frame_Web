@@ -11,3 +11,4 @@ WebServer/server/package-lock.json
 
 WebServer/web/frame/node_modules
 /WebServer/web/frame/src/data/qrcode.png
+/Frame_Web/static/build
