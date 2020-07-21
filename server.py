@@ -25,9 +25,9 @@ socketio = SocketIO(app, cors_allowed_origins='*')
 @cross_origin()
 def index():
     # Create FrameTalk Project
-    p_id, ido_id, odo_id, dev_name = utlis.create_frame(gen_uuid())
-    '''p_id, ido_id, odo_id = 17, 51, 52
-    dev_name = 'Frame_' + str(p_id)'''
+    #p_id, ido_id, odo_id, dev_name = utlis.create_frame(gen_uuid())
+    p_id, ido_id, odo_id = 17, 51, 52
+    dev_name = 'Frame_' + str(p_id)
 
     # Return FrameTalk Render
     return render_template("homepage.html",
@@ -51,6 +51,16 @@ def bind(s_id):
     # Bind the PortraitGuess
     utlis.bind_frame(p_id, do_id, d_id)
     return jsonify({"result": "Success Binding"})
+
+@app.route('/leave', methods=['POST'], strict_slashes=False)
+@cross_origin()
+def leave():
+    data = request.get_json()
+    socketio.emit("Leave", {
+        "p_id": data["p_id"],
+        "uuid": data["uuid"]
+    })
+    return jsonify({"result": "Success Leave"})
 
 @app.route('/group', methods=['GET'], strict_slashes=False)
 @cross_origin()
@@ -106,10 +116,10 @@ def offConnect():
     utlis.unbind_frame(p_id, do_id)
 
     # Deregister the PGSmartphone
-    utlis.deregister_webserver(p_id, do_id)
+    #utlis.deregister_webserver(p_id, do_id)
 
     # Delete FrameTalk Project
-    utlis.delete_frame(p_id)
+    #utlis.delete_frame(p_id)
     del Frame[currentSocketId]
     print(f'Remove Socket {currentSocketId}')
 
@@ -128,10 +138,10 @@ def detect_disconnect():
         utlis.unbind_frame(p_id, do_id)
 
         # Deregister the PGSmartphone
-        utlis.deregister_webserver(p_id, do_id)
+        #utlis.deregister_webserver(p_id, do_id)
 
         # Delete FrameTalk Project
-        utlis.delete_frame(p_id)
+        #utlis.delete_frame(p_id)
         del Frame[currentSocketId]
     print(f'Socket {currentSocketId} Disconnect')
 

@@ -92,7 +92,12 @@ There is one part of FrameTalk system written in Web Mode: GameModule.
 ```python
 import requests, json
 requests.post('http://iottalk2.haohao.in:8080/autogen/ccm_api', data={"username": "iottalk","password":"iot2019","api_name": "project.create", "payload": json.dumps({"p_name":"Test_3"})})
-```   
+```
+
+## Setup AG Problem
+- https://blog.csdn.net/will5451/article/details/53861092
+- https://www.e2enetworks.com/help/knowledge-base/how-to-open-ports-on-iptables-in-a-linux-server/
+- https://askubuntu.com/questions/224392/how-to-allow-remote-connections-to-flask
 
 ## Reference
 - https://flask-socketio.readthedocs.io/en/latest/
@@ -101,5 +106,6 @@ requests.post('http://iottalk2.haohao.in:8080/autogen/ccm_api', data={"username"
 - https://www.w3school.com.cn/jsref/jsref_split.asp
 - https://flask-cors.readthedocs.io/en/latest/
 - https://stackoverflow.com/questions/21765692/flask-render-template-with-path?rq=1
-
+- https://janakiev.com/blog/python-shell-commands/
+- https://stackoverflow.com/questions/10434599/get-the-data-received-in-a-flask-request
 

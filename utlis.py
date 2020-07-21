@@ -40,7 +40,7 @@ def create_frame(uuid):
     print(f"Create Frame Successfully!\nProject ID {p_id}, PGSmartphone ID {ido_id}, PortraitGuess ID {odo_id}")
 
     # Register the PGSmartphone
-    register_webserver(p_id, ido_id)
+    #register_webserver(p_id, ido_id)
 
     return p_id, ido_id, odo_id, dev_name
 
@@ -61,8 +61,10 @@ def deregister_webserver(p_id, do_id):
 
 def bind_frame(p_id, do_id, d_id):
     # Bind the PortraitGuess
+    print(f"Bind PortraitGuess {do_id} Successfully")
     api.device.bind(p_id, do_id, d_id, session=session)
 
 def unbind_frame(p_id, do_id):
     # Unbind the PortraitGuess
+    print(f"Unbind PortraitGuess {do_id} Successfully")
     api.device.unbind(p_id, do_id, session=session)

@@ -16,6 +16,18 @@ $(function(){
         key = curID.key;
         initial();
     });
+    socketIo.on("Leave", (msg)=>{
+        if(p_id == msg["p_id"]){
+            //console.log("WebServer Leave ", p_id);
+            console.log(player_uuid, msg['uuid']);
+            if(player_uuid == msg["uuid"]){
+                player_uuid = null;
+                play_mode = null;
+                // let processing show "see you"
+                MsgHandler('Processing', "q,0;");
+            }
+        }
+    })
 });
 
 $(window).on('beforeunload', function (e) {
