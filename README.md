@@ -108,4 +108,4 @@ requests.post('http://iottalk2.haohao.in:8080/autogen/ccm_api', data={"username"
 - https://stackoverflow.com/questions/21765692/flask-render-template-with-path?rq=1
 - https://janakiev.com/blog/python-shell-commands/
 - https://stackoverflow.com/questions/10434599/get-the-data-received-in-a-flask-request
-
+- https://cowsay.blog/post/ocappqt9/

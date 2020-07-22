@@ -18,7 +18,7 @@ Frame = {}
 app = Flask(__name__, template_folder='templates')
 bootstrap = Bootstrap(app)
 # Fix the CROS issue
-socketio = SocketIO(app, cors_allowed_origins='*')
+socketio = SocketIO(app, cors_allowed_origins='*', ping_timeout=10, ping_interval=5)
 
 ''' Server Route '''
 @app.route("/", methods=['GET'], strict_slashes=False)

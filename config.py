@@ -3,6 +3,7 @@ class Config(object):
     port = '5000'
     csm_api = 'https://iottalk2.tw/csm'
     ccm_api = 'https://iottalk2.tw/api/v0'
+    ag_api = 'http://140.113.215.20:5000/autogen'
     idm = {
         'name': 'PGSmartphone',
         'idf_list': [
