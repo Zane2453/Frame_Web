@@ -112,7 +112,7 @@ class App extends React.Component {
 	}
 	/* ---------------------------------- Setup --------------------------------- */
 	setup = async (p5, canvasParentRef) => {
-		p5.frameRate(1000)
+		p5.frameRate(1)
 		// p5.createCanvas(540, 960, p5.P2D).parent(canvasParentRef);
 		p5.createCanvas(window.innerWidth, window.innerHeight, p5.P2D).parent(canvasParentRef)
 		p5.noCursor()
@@ -220,33 +220,35 @@ class App extends React.Component {
 			case 'W':
 				try {
 					let resizeWidth
+					let resizeHeight
 					if (this.forward_weather > this.weather_num[this.name_weather] - 1) {
 						this.forward_weather = 0
 					}
-
-					if (this.pre_weather_img_displaying != null) {
-						resizeWidth =
-							(this.pre_weather_img_displaying.width * p5.height) / this.pre_weather_img_displaying.height
-						this.pre_weather_img_displaying.resize(resizeWidth, p5.height)
-						p5.image(this.pre_weather_img_displaying, (p5.width - resizeWidth) / 2, 0)
+					let prepareImage = this.pre_weather_img_displaying
+						? this.pre_weather_img_displaying
+						: this.weather_images[this.weather_start[this.name_weather] + this.forward_weather]
+					if (prepareImage.width >= prepareImage.height) {
+						resizeWidth = p5.width
+						resizeHeight = prepareImage.height * (p5.width / prepareImage.width)
+						if (resizeHeight >= p5.height) {
+							resizeWidth = resizeWidth * (p5.height / resizeHeight)
+							resizeHeight = p5.height
+						}
 					} else {
-						this.weather_img_displaying = this.weather_images[
-							this.weather_start[this.name_weather] + this.forward_weather
-						]
-						resizeWidth =
-							(this.weather_img_displaying.width * p5.height) / this.weather_img_displaying.height
-						this.weather_img_displaying.resize(resizeWidth, p5.height)
-						p5.image(this.weather_img_displaying, (p5.width - resizeWidth) / 2, 0)
-						this.pre_weather_img_displaying = this.weather_img_displaying
+						resizeHeight = p5.height
+						resizeWidth = prepareImage.width * (p5.height / prepareImage.height)
+						if (resizeWidth >= p5.width) {
+							resizeHeight = resizeHeight * (p5.width / resizeWidth)
+							resizeWidth = p5.width
+						}
 					}
-					//show QR code
-					if (this.QRimg.width > 0) {
-						p5.image(
-							this.QRimg,
-							(p5.width - resizeWidth) / 2 + (resizeWidth - this.QRimg.width - this.QRmargin),
-							p5.height - this.QRimg.height - this.QRmargin
-						)
-					}
+					prepareImage.resize(resizeWidth, resizeHeight)
+					p5.image(prepareImage, (p5.width - resizeWidth) / 2, (p5.height - resizeHeight) / 2)
+					p5.image(
+						this.QRimg,
+						p5.width - (p5.width - resizeWidth) / 2 - this.QRimg.width - this.QRmargin,
+						p5.height - (p5.height - resizeHeight) / 2 - this.QRimg.height - this.QRmargin
+					)
 				} catch (exception) {
 					console.log(`[frontend] case W failed`, exception)
 				}
@@ -254,6 +256,7 @@ class App extends React.Component {
 				break
 			// ************** case B: Mode(Start) Page ****************************
 			case 'S':
+				p5.frameRate(60)
 				p5.background(0, 0, 0)
 				p5.fill(246, 224, 183)
 				p5.rect(
@@ -548,19 +551,22 @@ class App extends React.Component {
 	}
 	/* ------------------------------ load QR code ------------------------------ */
 	loadQR = (p5) => {
-		if (window.configs.p_id !== undefined && window.configs.odo_id !== undefined) {
-			QRCode.toDataURL(
-				`${window.gameUrl}:${window.gamePort}${window.gamePath}?p_id=${window.configs.p_id}&od_id=${window.configs.odo_id}`
-			).then((url) => {
-				try {
-					let QRimg = p5.loadImage(url)
-					QRimg.resize(this.QRheight - 2 * this.QRmargin, this.QRheight - 2 * this.QRmargin)
-					this.QRimg = QRimg
-				} catch (exception) {
-					console.log(`[frontend] ${`QR code error: ${exception}`}`)
-				}
-			})
-		}
+		var QRInterval = setInterval(() => {
+			if (window.configs.p_id !== undefined && window.configs.odo_id !== undefined) {
+				QRCode.toDataURL(
+					`${window.gameUrl}:${window.gamePort}${window.gamePath}?p_id=${window.configs.p_id}&od_id=${window.configs.odo_id}`
+				).then((url) => {
+					try {
+						let QRimg = p5.loadImage(url)
+						QRimg.resize(this.QRheight - 2 * this.QRmargin, this.QRheight - 2 * this.QRmargin)
+						this.QRimg = QRimg
+					} catch (exception) {
+						console.log(`[frontend] ${`QR code error: ${exception}`}`)
+					}
+				})
+				clearInterval(QRInterval)
+			}
+		}, 1000)
 	}
 	/* ------------------- Thread for loading portrait images ------------------- */
 	loadPortraitImageThread = async (p5) => {
@@ -570,7 +576,7 @@ class App extends React.Component {
 	loadWeatherImageThread = (p5) => {
 		return new Promise((resolve) => {
 			let weather_names = this.weather_db_path
-			console.log(`[frontend] there are ${this.weather_names.length} weather paintings`)
+			// console.log(`[frontend] there are ${this.weather_names.length} weather paintings`)
 			weather_names.forEach((x) => console.log('[frontend] ' + x))
 			Promise.all(weather_names.map((weather_name) => import(`${weather_name}.jpg`))).then((importResults) => {
 				/* ---------------------------- loadWeatherImages --------------------------- */
