@@ -4,7 +4,7 @@ from flask import render_template, jsonify, request
 from flask_socketio import SocketIO, emit
 from flask_bootstrap import Bootstrap
 from flask_cors import cross_origin # Fix the CROS issue
-import uuid
+import uuid, requests
 
 from config import env_config
 
@@ -13,6 +13,7 @@ import utlis
 
 ''' Current Existing Wireframe '''
 Frame = {}
+Web = {}
 
 ''' Initialize Flask '''
 app = Flask(__name__, template_folder='templates')
@@ -25,9 +26,9 @@ socketio = SocketIO(app, cors_allowed_origins='*', ping_timeout=10, ping_interva
 @cross_origin()
 def index():
     # Create FrameTalk Project
-    #p_id, ido_id, odo_id, dev_name = utlis.create_frame(gen_uuid())
-    p_id, ido_id, odo_id = 17, 51, 52
-    dev_name = 'Frame_' + str(p_id)
+    p_id, ido_id, odo_id, dev_name = utlis.create_frame(gen_uuid())
+    '''p_id, ido_id, odo_id = 17, 51, 52
+    dev_name = 'Frame_' + str(p_id)'''
 
     # Return FrameTalk Render
     return render_template("homepage.html",
@@ -62,6 +63,13 @@ def leave():
     })
     return jsonify({"result": "Success Leave"})
 
+@app.route('/push', methods=['POST'], strict_slashes=False)
+@cross_origin()
+def push():
+    data = request.get_json()
+    Web[int(data["p_id"])].push(data["idf"], data["data"])
+    return jsonify({"result": "Push Successful!"})
+
 @app.route('/group', methods=['GET'], strict_slashes=False)
 @cross_origin()
 def getGroup():
@@ -95,12 +103,17 @@ def onConnect(msg):
     Frame[currentSocketId] = {
         'd_id': current_mac,
         'p_id': msg['p_id'],
-        'do_id': msg['do_id']
+        'do_id': msg['odo_id']
     }
     emit('ID', {
         'key': currentSocketId,
         'id': current_mac
     })
+    Web[msg['p_id']] = utlis.DAI(msg['p_id'], msg['ido_id'], gen_uuid())
+    Web[msg['p_id']].register()
+    Web[msg['p_id']].bind()
+    requests.post(f'{env_config.webServer["url"]}:{env_config.webServer["port"]}/register',
+                  data={"p_id": msg['p_id']})
     print(f'Add Socket {currentSocketId}')
 
 @socketio.on('END')
@@ -116,10 +129,13 @@ def offConnect():
     utlis.unbind_frame(p_id, do_id)
 
     # Deregister the PGSmartphone
+    Web[p_id].deregister()
+    requests.post(f'{env_config.webServer["url"]}:{env_config.webServer["port"]}/deregister',
+                  data={"p_id": p_id})
     #utlis.deregister_webserver(p_id, do_id)
 
     # Delete FrameTalk Project
-    #utlis.delete_frame(p_id)
+    utlis.delete_frame(p_id)
     del Frame[currentSocketId]
     print(f'Remove Socket {currentSocketId}')
 
@@ -138,10 +154,13 @@ def detect_disconnect():
         utlis.unbind_frame(p_id, do_id)
 
         # Deregister the PGSmartphone
+        Web[p_id].deregister()
+        requests.post(f'{env_config.webServer["url"]}:{env_config.webServer["port"]}/deregister',
+                      data={"p_id": p_id})
         #utlis.deregister_webserver(p_id, do_id)
 
         # Delete FrameTalk Project
-        #utlis.delete_frame(p_id)
+        utlis.delete_frame(p_id)
         del Frame[currentSocketId]
     print(f'Socket {currentSocketId} Disconnect')
 

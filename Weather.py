@@ -11,21 +11,25 @@ idf_list = ['Name-I']
 odf_list = []
 
 DAN = None
-
+t1 = None
+t2 = None
 Name_I = None
 
 def on_register(dan):
-    global DAN
+    global DAN, t1, t2
     DAN = dan
     t1 = threading.Thread(target=getWeather)
-    t2 = threading.Thread(target=pushWeather)
     t1.daemon = True
     t1.start()
+    t2 = threading.Thread(target=pushWeather)
     t2.daemon = True
     t2.start()
     print('[da] register successfully')
 
 def on_deregister():
+    global t1, t2
+    t1.stop()
+    t2.stop()
     print('[da] register fail')
 
 # MIRC311 Hsinchu

@@ -9,7 +9,8 @@ $(function(){
     // Initialize
     socketIo.emit('START',{
         p_id: p_id,
-        do_id: odo_id
+        odo_id: odo_id,
+        ido_id: ido_id
     });
     socketIo.on('ID', (curID)=>{
         device_id = curID.id;
