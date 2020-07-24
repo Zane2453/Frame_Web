@@ -39,7 +39,8 @@ $(function () {
 			// Initialize
 			socketIo.emit('START', {
 				p_id: configs.p_id,
-				do_id: configs.odo_id,
+				odo_id: configs.odo_id,
+				ido_id: configs.ido_id
 			})
 			socketIo.on('ID', (curID) => {
 				device_id = curID.id

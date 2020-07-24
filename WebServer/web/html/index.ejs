@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title>猜猜我是誰</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/index.css">
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/socket.io.js"></script>
+    <script type="text/javascript" src="js/progressbar.min.js"></script>
+    <script>
+        var p_id = "<%= p_id %>",
+            do_id = "<%= do_id %>";
+    </script>
+    <script type="text/javascript" src="js/sensor.js"></script>
+    <script type="text/javascript" src="js/render.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+</head>
+<body>
+    <audio id="wrongAudio">
+        <source src="../audio/wrong.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="correctAudio">
+        <source src="../audio/correct.mp3" type="audio/mpeg">
+    </audio>
+    <div class="container container-table">
+        <div class="row vertical-center-row">
+            <div class="center-block">
+                <div id="prompt"  class="prompts" style="display:none">WHO AM I ?</div>
+                <div id="prompt2" class="prompts" style="display:none">Choose an answer</div>
+                <div id="prompt3" class="prompts my_prompt" style="display:none">Choose a Group</div>
+                <div id="prompt4" class="prompts my_prompt" style="display:none">Choose a Mode</div>
+                <div id="prompt5" class="prompts my_prompt" style="display:none">Choose a Member</div>
+                <div id="prompt6" class="prompts my_prompt" style="display:none">SHAKE YOUR PHONE !</div>
+                <div><img id="shakeImage" src="icon/shake.png" style="display:none"></div>
+                <div>
+                    <ul id="back_menu" class="uls my_ul" style="display: none;">
+                        <li><button class="backBtn btn btn-primary center-block my_li_btn">返回主選單</button></li>
+                    </ul>
+                </div>
+                <div><img id="successImage" src="icon/success.png" style="display:none"></div>
+                <div id="successAlert" class="alert alert-success" role="alert" style="display:none">
+                    You got it! I am
+                </div>
+                <div id="successName_wrapper">
+                    <div id="successName" class="alert alert-success" role="alert" style="display:none"></div>
+                </div>
+                <div id="wrongAlert" class="alert alert-danger" role="alert" style="display:none">
+                    Incorrect answer. Try again!
+                </div>
+                <div id="chance" style="display:none"></div>
+                <div>
+                    <ul id="options" class="uls" style="display:none"></ul>
+                </div>
+                <div>
+                    <ul id="group_options" class="uls my_ul" style="display: none;"></ul>
+                </div>
+                <div>
+                    <ul id="member_options" class="uls my_ul" style="display: none;"></ul>
+                </div>
+                <div>
+                    <ul id="mode_options" class="uls my_ul" style="display: none;">
+                        <li><button mode="guess" class="modeBtn btn btn-primary center-block my_li_btn">猜猜看</button></li>
+                        <li><button mode="shake" class="modeBtn btn btn-primary center-block my_li_btn">搖搖看</button></li>
+                    </ul>
+                </div>
+                <div id="btns">
+                    <button id="nextBtn" class="btn btn-info center-block function_btn" style="display:none">Next Picture</button>
+                    <button id="replayBtn" class="btn btn-info center-block function_btn" style="display:none">Play Again</button>
+                    <br>
+                    <button id="chooseGroupBtn" class="btn btn-secondary center-block function_btn" style="display:none">Choose Group</button>
+                    <br>
+                    <button id="modeBtn" class="btn btn-primary center-block function_btn" style="display:none">Choose Mode</button>
+                    <br>
+                    <button id="endBtn" class="btn btn-danger center-block function_btn" style="display:none">End</button>
+                </div>
+                <div id="loadingIndicator"></div>
+                <div id="footer">
+                    <img id="volume" src="../icon/mute.png" alt="mute" height="40" width="40" style="display:none">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal for progressbar -->
+    <div class="modal" id="progressbarModal" tabindex="-1" role="dialog" aria-labelledby="progressbarModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="progressbarModal_title">Loading...</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="my_modal_backdrop"></div>
+
+</body>
+</html>

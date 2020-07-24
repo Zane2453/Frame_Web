@@ -4,7 +4,7 @@ from flask import render_template, jsonify, request
 from flask_socketio import SocketIO, emit
 from flask_bootstrap import Bootstrap
 from flask_cors import cross_origin
-import uuid
+import uuid, requests
 
 from config import env_config
 
@@ -13,6 +13,7 @@ import utlis
 
 ''' Current Existing Wireframe '''
 Frame = {}
+Web = {}
 
 ''' Initialize Flask '''
 app = Flask(__name__,template_folder="templates",static_folder="static",static_url_path="/static")
@@ -24,15 +25,16 @@ socketio = SocketIO(app, cors_allowed_origins='*')
 @cross_origin()
 def index():
     #p_id, ido_id, odo_id, dev_name = utlis.create_frame(len(Frame)+1)
-    p_id, ido_id, odo_id = 17, 51, 52
-    dev_name = 'Frame_' + str(len(Frame)+1)
+    #p_id, ido_id, odo_id = 17, 51, 52
+    #dev_name = 'Frame_' + str(len(Frame)+1)
     return render_template("index.html")
 
 @app.route('/init', methods=['GET'], strict_slashes=False)
 @cross_origin()
 def getInit():
-    p_id, ido_id, odo_id = 17, 51, 52
-    dev_name = 'Frame_' + str(len(Frame)+1)
+    p_id, ido_id, odo_id, dev_name = utlis.create_frame(gen_uuid())
+    '''p_id, ido_id, odo_id = 17, 51, 52
+    dev_name = 'Frame_' + str(len(Frame)+1)'''
     initConfig = {
         'csm_url': env_config.csm_api,
         'dm_name': env_config.odm['name'],
@@ -44,6 +46,13 @@ def getInit():
         'dev_name': dev_name,
     }
     return jsonify({'initConfig': initConfig})
+
+@app.route('/push', methods=['POST'], strict_slashes=False)
+@cross_origin()
+def push():
+    data = request.get_json()
+    Web[int(data["p_id"])].push(data["idf"], data["data"])
+    return jsonify({"result": "Push Successful!"})
 
 @app.route('/bind/<string:s_id>', methods=['POST'], strict_slashes=False)
 @cross_origin()
@@ -79,12 +88,16 @@ def onConnect(msg):
     Frame[currentSocketId] = {
         'd_id': current_mac,
         'p_id': msg['p_id'],
-        'do_id': msg['do_id']
+        'do_id': msg['odo_id']
     }
     emit('ID', {
         'key': currentSocketId,
         'id': current_mac
     })
+    Web[msg['p_id']] = utlis.DAI(msg['p_id'], msg['ido_id'], gen_uuid())
+    Web[msg['p_id']].register()
+    Web[msg['p_id']].bind()
+    requests.post(f'{env_config.webServer["url"]}:{env_config.webServer["port"]}/register',data={"p_id": msg['p_id']})
     print(f'Add Socket {currentSocketId}')
 
 @socketio.on('END')
@@ -93,7 +106,9 @@ def offConnect():
     p_id = Frame[currentSocketId]['p_id']
     do_id = Frame[currentSocketId]['do_id']
     utlis.unbind_frame(p_id, do_id)
-    #utlis.delete_frame(p_id)
+    Web[p_id].deregister()
+    requests.post(f'{env_config.webServer["url"]}:{env_config.webServer["port"]}/deregister',data={"p_id": p_id})
+    utlis.delete_frame(p_id)
     del Frame[currentSocketId]
     print(f'Remove Socket {currentSocketId}')
 
@@ -104,7 +119,9 @@ def detect_disconnect():
         p_id = Frame[currentSocketId]['p_id']
         do_id = Frame[currentSocketId]['do_id']
         utlis.unbind_frame(p_id, do_id)
-        #utlis.delete_frame(p_id)
+        Web[p_id].deregister()
+        requests.post(f'{env_config.webServer["url"]}:{env_config.webServer["port"]}/deregister',data={"p_id": p_id})
+        utlis.delete_frame(p_id)
         del Frame[currentSocketId]
     print(f'Socket {currentSocketId} Disconnect')
 

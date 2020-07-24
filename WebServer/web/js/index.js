@@ -5,7 +5,7 @@ var lastClickTime; //record last click optionBtn time
 var firstPlay = true;
 var acc_flag = false;
 
-var bar;
+var bar;    // Loading bar
 var socket = io();
 var uuid;
 var groupList = {}, memberList = [], optionList = [];
@@ -209,7 +209,10 @@ function goEndPage(){
 function sendPlayReq(){
     //1
     console.log("1. PlayReq", uuid);
-    socket.emit("PlayReq", uuid);
+    socket.emit("PlayReq", {
+        "p_id": p_id,
+        "uuid": uuid
+    });
 }
 
 function recvPlayRes(){
@@ -224,8 +227,9 @@ function sendMode(){
     let tmp = game_mode == "guess" ? 0 : 1;
     //2.5
     socket.emit("Name-I", {
-        type: "mode",
-        mode: tmp
+        "p_id": p_id,
+        "type": "mode",
+        "mode": tmp
     });
 }
 
@@ -233,9 +237,10 @@ function sendMemberReq(){
     console.log("3. Name-I", group_name);
     //3 //10
     socket.emit("Name-I", {
-        type: "group",
-        id: group_id,
-        name: group_name
+        "p_id": p_id,
+        "type": "group",
+        "id": group_id,
+        "name": group_name
     });
 }
 
@@ -258,9 +263,10 @@ function sendAnswer(){
     //5
     console.log("5. Name-I", answer_name);
     socket.emit("Name-I", {
-        type: "answer",
-        id: answer_id,
-        name: answer_name
+        "p_id": p_id,
+        "type": "answer",
+        "id": answer_id,
+        "name": answer_name
     });
 }
 
@@ -284,19 +290,28 @@ function sendGuessResult(status){
     if(status == "Correct"){
         //7
         console.log("7. Correct");
-        socket.emit("Correct", "1");
+        socket.emit("Correct", {
+            "p_id": p_id,
+            "data": "1"
+        });
     }
     else if(status == "Wrong"){
         //7
         console.log("7. Wrong");
-        socket.emit("Wrong", "1");
+        socket.emit("Wrong", {
+            "p_id": p_id,
+            "data": "1"
+        });
     }
 }
 
 function sendShakeData(data){
     //7
     console.log("7. Acceleration");
-    socket.emit("Acceleration", [data.x, data.y, data.z]);
+    socket.emit("Acceleration", {
+        "p_id": p_id,
+        "data": [data.x, data.y, data.z]
+    });
 }
 
 function recvDisplay(){
