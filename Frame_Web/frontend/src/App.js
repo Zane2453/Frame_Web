@@ -247,6 +247,7 @@ class App extends React.Component {
 						}
 					}
 					prepareImage.resize(resizeWidth, resizeHeight)
+					p5.background(0)
 					p5.image(prepareImage, (p5.width - resizeWidth) / 2, (p5.height - resizeHeight) / 2)
 					p5.image(
 						this.QRimg,
