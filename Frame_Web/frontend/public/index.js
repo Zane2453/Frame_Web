@@ -18,6 +18,7 @@ window.configs = {
 	ido_id: undefined,
 	odo_id: undefined,
 	dev_name: undefined,
+	client_url: undefined,
 }
 
 $(function () {

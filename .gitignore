@@ -13,3 +13,4 @@ WebServer/web/frame/node_modules
 /WebServer/web/frame/src/data/qrcode.png
 /Frame_Web/static/build
 /Frame_Web/templates/index.html
+/.vscode

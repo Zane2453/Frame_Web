@@ -16,9 +16,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "prebuild": "shx rm -rf ../templates/index.html && shx rm -rf ../static/build",
+    "prebuild": "shx rm -rf ../templates && shx rm -rf ../static && cd .. && shx mkdir templates && shx mkdir static && cd frontend",
     "build": "react-scripts build",
-    "postbuild": "shx mv build/index.html ../templates/ && shx mv build ../static/build",
+    "postbuild": "shx mv build/index.html ../templates/ && shx mv build ../static/build && cd ..",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

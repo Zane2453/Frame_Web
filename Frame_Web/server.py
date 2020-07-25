@@ -44,6 +44,7 @@ def getInit():
         'ido_id': ido_id,
         'odo_id': odo_id,
         'dev_name': dev_name,
+        'client_url': env_config.webServer['url'] + ":" + str(env_config.webServer['port']) + "/game?p_id=" + str(p_id) + "&od_id=" + str(ido_id)
     }
     return jsonify({'initConfig': initConfig})
 

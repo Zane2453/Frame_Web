@@ -110,6 +110,10 @@ class App extends React.Component {
 			}
 		})
 	}
+	/* ---------------------------------- Text Handler --------------------------------- */
+	textSizeCalculator = (showText, width) => {
+		return ((100 / showText.length) * width) / 100
+	}
 	/* ---------------------------------- Setup --------------------------------- */
 	setup = async (p5, canvasParentRef) => {
 		p5.frameRate(1)
@@ -125,10 +129,10 @@ class App extends React.Component {
 		console.log(`[frontend] loading portrait`)
 		this.portrait_load_finish = true
 		/* ------------------------------- Set QR code ------------------------------ */
-		this.QRheight = p5.height / 6
-		this.QRmargin = 0.05 * this.QRheight
+		this.QRheight = Math.min(p5.height, p5.width) / 5
+		this.QRmargin = this.QRheight * 0.15
 		this.loadQR(p5)
-		this.margin_B = p5.int(p5.width / 8)
+		this.margin_B = Math.min(p5.height, p5.width) / 8
 	}
 	/* ---------------------------------- Draw ---------------------------------- */
 	draw = async (p5) => {
@@ -175,7 +179,7 @@ class App extends React.Component {
 					/* -------------------------- will update portrait -------------------------- */
 					this.forward = this.forward + 1
 					this.clearRecvHandler()
-					console.log(`[frontend] recvdata foward+1 :`, this.forward)
+					console.log(`[frontend] recvdata forward+1 :`, this.forward)
 				} else if (p5.match(data_split[0], 'e') !== null) {
 					/* --------------------- will switch to end game status --------------------- */
 					this.caselabel = 'E'
@@ -207,9 +211,9 @@ class App extends React.Component {
 					((p5.frameCount % 70) + 1) * 10
 				)
 				p5.textAlign(p5.CENTER, p5.CENTER)
-				p5.textSize(50)
 				p5.textFont('Monaco')
 				p5.fill(255)
+				p5.textSize(this.textSizeCalculator('Loading data ... ', p5.width))
 				p5.text('Loading data ... ', p5.width / 2, p5.height / 2)
 				if (this.weather_load_finish && this.portrait_load_finish) {
 					this.caselabel = 'W'
@@ -246,8 +250,10 @@ class App extends React.Component {
 					p5.image(prepareImage, (p5.width - resizeWidth) / 2, (p5.height - resizeHeight) / 2)
 					p5.image(
 						this.QRimg,
-						p5.width - (p5.width - resizeWidth) / 2 - this.QRimg.width - this.QRmargin,
-						p5.height - (p5.height - resizeHeight) / 2 - this.QRimg.height - this.QRmargin
+						p5.width - (p5.width - resizeWidth) / 2 - this.QRheight,
+						p5.height - (p5.height - resizeHeight) / 2 - this.QRheight,
+						this.QRheight,
+						this.QRheight
 					)
 				} catch (exception) {
 					console.log(`[frontend] case W failed`, exception)
@@ -299,7 +305,7 @@ class App extends React.Component {
 				p5.fill(255, 255, 255)
 				p5.textAlign(p5.CENTER, p5.CENTER)
 				p5.textFont(this.FontPlay)
-				p5.textSize(45)
+				p5.textSize(this.textSizeCalculator('Choose a Mode', p5.width))
 				p5.text('Choose a Mode', p5.width / 2, p5.height / 2)
 				this.clearRecvHandler()
 				break
@@ -349,7 +355,7 @@ class App extends React.Component {
 				p5.fill(255, 255, 255)
 				p5.textAlign(p5.CENTER, p5.CENTER)
 				p5.textFont(this.FontPlay)
-				p5.textSize(45)
+				p5.textSize(this.textSizeCalculator('Choose a Group', p5.width))
 				p5.text('Choose a Group', p5.width / 2, p5.height / 2)
 				this.clearRecvHandler()
 				break
@@ -399,7 +405,7 @@ class App extends React.Component {
 				p5.fill(255, 255, 255)
 				p5.textAlign(p5.CENTER, p5.CENTER)
 				p5.textFont(this.FontPlay)
-				p5.textSize(40)
+				p5.textSize(this.textSizeCalculator('Choose a Member', p5.width))
 				p5.text('Choose a Member', p5.width / 2, p5.height / 2)
 				this.clearRecvHandler()
 				break
@@ -423,9 +429,9 @@ class App extends React.Component {
 					((p5.frameCount % 70) + 1) * 10
 				)
 				p5.textAlign(p5.CENTER, p5.CENTER)
-				p5.textSize(50)
 				p5.textFont(this.FontPlay)
 				p5.fill(255)
+				p5.textSize(this.textSizeCalculator('Loading data ... ' + this.percentage + '%', p5.width))
 				p5.text('Loading data ... ' + this.percentage + '%', p5.width / 2, p5.height / 2)
 				if (this.portrait_load_finish) this.caselabel = 'P'
 				this.clearRecvHandler()
@@ -530,9 +536,9 @@ class App extends React.Component {
 
 				// show leave game message
 				p5.textAlign(p5.CENTER, p5.CENTER)
-				p5.textSize(60)
 				p5.textFont(this.FontPlay)
 				p5.fill(180)
+				p5.textSize(this.textSizeCalculator('See you !', p5.width))
 				p5.text('See you !', p5.width / 2, p5.height / 2)
 				// p5.tint portrait
 				p5.tint(255, p5.map(this.timer_q, 0, this.time_q, 255, 0))
@@ -553,13 +559,9 @@ class App extends React.Component {
 	loadQR = (p5) => {
 		var QRInterval = setInterval(() => {
 			if (window.configs.p_id !== undefined && window.configs.odo_id !== undefined) {
-				QRCode.toDataURL(
-					`${window.gameUrl}:${window.gamePort}${window.gamePath}?p_id=${window.configs.p_id}&od_id=${window.configs.odo_id}`
-				).then((url) => {
+				QRCode.toDataURL(`${window.configs.client_url}`).then((url) => {
 					try {
-						let QRimg = p5.loadImage(url)
-						QRimg.resize(this.QRheight - 2 * this.QRmargin, this.QRheight - 2 * this.QRmargin)
-						this.QRimg = QRimg
+						this.QRimg = p5.loadImage(url)
 					} catch (exception) {
 						console.log(`[frontend] ${`QR code error: ${exception}`}`)
 					}
