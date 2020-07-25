@@ -32,9 +32,9 @@ def index():
 @app.route('/init', methods=['GET'], strict_slashes=False)
 @cross_origin()
 def getInit():
-    #p_id, ido_id, odo_id, dev_name = utlis.create_frame(gen_uuid())
-    p_id, ido_id, odo_id = 17, 51, 52
-    dev_name = f'Frame_{gen_uuid()}'
+    p_id, ido_id, odo_id, dev_name = utlis.create_frame(gen_uuid())
+    # p_id, ido_id, odo_id = 17, 51, 52
+    # dev_name = f'Frame_{gen_uuid()}
     initConfig = {
         'csm_url': env_config.csm_api,
         'dm_name': env_config.odm['name'],
@@ -109,7 +109,7 @@ def offConnect():
     utlis.unbind_frame(p_id, do_id)
     Web[p_id].deregister()
     requests.post(f'{env_config.webServer["url"]}:{env_config.webServer["port"]}/deregister',data={"p_id": p_id})
-    #utlis.delete_frame(p_id)
+    utlis.delete_frame(p_id)
     del Frame[currentSocketId]
     print(f'Remove Socket {currentSocketId}')
 
@@ -122,7 +122,7 @@ def detect_disconnect():
         utlis.unbind_frame(p_id, do_id)
         Web[p_id].deregister()
         requests.post(f'{env_config.webServer["url"]}:{env_config.webServer["port"]}/deregister',data={"p_id": p_id})
-        #utlis.delete_frame(p_id)
+        utlis.delete_frame(p_id)
         del Frame[currentSocketId]
     print(f'Socket {currentSocketId} Disconnect')
 

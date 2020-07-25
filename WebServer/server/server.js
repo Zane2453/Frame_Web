@@ -5,12 +5,9 @@ var express = require('express'),
     fs = require('fs'),
     bodyParser = require('body-parser'),
     config = require('./config'),
-    dan2 = require('./iottalk_api/dan2'),
-    dai = require('./iottalk_api/dai').dai,
     daList = {},
     utils = require('./utils');
 const request = require('request');
-const { v4: uuidv4 } = require('uuid');
 
 /*** idf_list ***/
 function push(p_id, idf_name, data){
@@ -95,10 +92,10 @@ http.listen((process.env.PORT || config.webServerPort), '0.0.0.0');
 
 /* web page */
 app.get("/game", function(req, res){
-    // var p_id = req.query.p_id,
-    //     do_id = req.query.do_id;
-    var p_id = 17,
-        do_id = 51;
+    var p_id = req.query.p_id,
+        do_id = req.query.do_id;
+    // var p_id = 17,
+    //     do_id = 51;
     fs.readFile("../web/html/index.ejs", function(err, contents){
         if(err){ console.log(err); }
         else{
