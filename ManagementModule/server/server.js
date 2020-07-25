@@ -22,7 +22,7 @@ utils.createFolder(uploadFolder);
 // Expired timer
 var expired_time = 50;
 
-// modified 2020/0307
+// modified 2020/03/07
 // cors for portraitImages
 const corsOptions = {
     origin: [
@@ -56,20 +56,20 @@ http.listen((process.env.PORT || config.MngtServerPort), '0.0.0.0');
 /* APIs */
 // modified 2019/12/03
 // get expired time
-app.get("/getExpiredTime", function (req, res) {
+app.get("/getExpiredTime", function(req, res){
     //response
     utils.sendResponse(res, 200, JSON.stringify(expired_time));
 });
 
 // set expired time
-app.post("/setExpiredTime", function (req, res) {
+app.post("/setExpiredTime", function(req, res){
     expired_time = req.body.expired_time;
     //response
     utils.sendResponse(res, 200, JSON.stringify(expired_time));
 });
 
 // get getQuestion API
-app.get("/getQuestion", function (req, res) {
+app.get("/getQuestion", function(req, res){
     console.log("---getQuestion---");
 
     let question_id = req.query.question_id,
@@ -94,30 +94,30 @@ app.get("/getQuestion", function (req, res) {
         //find question by id
         db.Question.findOne({
             where: { id: question_id },
-            include: [{ model: db.Picture },
-            { model: db.GroupMember }]
+            include: [ { model: db.Picture },
+                       { model: db.GroupMember }]
         }).then(QuestionObject => {
             let QuestionData = QuestionObject.get({ plain: true });
 
             //sort picture by order
             let picId, sortedPic_list = [];
-            for (let i = 0; i < QuestionData.Pictures.length; i++) {
+            for(let i = 0; i < QuestionData.Pictures.length; i++){
                 picId = utils.getPicIdbyOrder(QuestionData.Pictures, i + 1);
-                if (picId != "none") {
+                if(picId != "none"){
                     img_size = Math.round((utils.getFilesizeInBytes("../web/img/" + picId) / 1000000.0) * 100) / 100;
                     total_img_size += img_size;
                     sortedPic_list.push({
-                        src: picId,
-                        size: img_size
+                        src : picId,
+                        size : img_size
                     });
                     // console.log(utils.getFilesizeInBytes("../web/img/" + picId) / 1000000.0);
                 }
             }
 
             //mark those group for this question
-            for (let i = 0; i < checkedGroup_list.length; i++) {
-                for (let j = 0; j < QuestionData.GroupMembers.length; j++) {
-                    if (checkedGroup_list[i].id == QuestionData.GroupMembers[j].GroupId) {
+            for(let i = 0; i < checkedGroup_list.length; i++){
+                for(let j = 0; j < QuestionData.GroupMembers.length; j++){
+                    if(checkedGroup_list[i].id == QuestionData.GroupMembers[j].GroupId){
                         checkedGroup_list[i].used = 1;
                     }
                 }
@@ -149,8 +149,8 @@ app.post('/uploadQuestion', function (req, res) {
     form.multiples = true;
     form.uploadDir = path.join(__dirname, 'upload_cache');
 
-    form.on('field', function (name, field) {
-        if (name == "user_upload_data") {
+    form.on('field', function(name, field) {
+        if(name == "user_upload_data"){
             user_upload_data = JSON.parse(field);
             qname = user_upload_data["name"];
             description = user_upload_data["description"];
@@ -163,21 +163,21 @@ app.post('/uploadQuestion', function (req, res) {
 
     form.on('file', function (name, file) {
         let buffer = null, type = null, order = 0,
-            picture_id = utils.uuid().substring(0, 16);
+            picture_id = utils.uuid().substring(0,16);
 
         buffer = readChunk.sync(file.path, 0, 262);
         type = fileType(buffer);
         photo_path.push(file.path);
 
         // Check the file type, must be either png, jpg or jpeg
-        if (type !== null && (type.ext === 'png' || type.ext === 'jpg' || type.ext === 'jpeg')) {
+        if(type !== null && (type.ext === 'png' || type.ext === 'jpg' || type.ext === 'jpeg')) {
             save_path = "../web/img/" + picture_id + "." + type.ext;
-            fs.rename(file.path, save_path, function (err, result) {
-                if (err) console.log('error', err);
+            fs.rename(file.path, save_path, function(err, result) {
+                if(err) console.log('error', err);
             });
 
             //find corresponding index from img_order
-            if (img_order.hasOwnProperty(file.name)) {
+            if(img_order.hasOwnProperty(file.name)){
                 order = img_order[file.name];
             }
 
@@ -198,50 +198,50 @@ app.post('/uploadQuestion', function (req, res) {
         }
     });
 
-    form.on('error', function (err) {
+    form.on('error', function(err) {
         console.log('Error occurred during processing - ' + err);
     });
 
-    form.on('end', function () {
+    form.on('end', function() {
         console.log('All the request fields have been processed.');
     });
 
     // Parse the incoming form fields.
     form.parse(req, function (err, fields, files) {
-        if (photo_status) {
+        if(photo_status){
             //create this question to related db
             console.log("start create this question...");
-            for (let i = 0; i < selected_group.length; i++) {
+            for(let i = 0; i < selected_group.length; i++){
                 groupmembers.push({
                     GroupId: selected_group[i].group_id
                 });
             }
 
             let data = {
-                name: qname,
-                description: description,
-                status: 0,
-                Pictures: pictures,
-                GroupMembers: groupmembers
+                name : qname,
+                description : description,
+                status : 0,
+                Pictures : pictures,
+                GroupMembers : groupmembers
             };
-            db.Question.create(data, { include: [db.Picture, db.GroupMember] }).then(function (q) {
+            db.Question.create(data, {include: [db.Picture, db.GroupMember]}).then(function(q){
                 console.log(q.id + " " + q.name + " created!!");
                 //send success response
-                utils.sendResponse(res, 200, JSON.stringify({ photo_status: 1 }));
+                utils.sendResponse(res, 200, JSON.stringify({photo_status: 1}));
             });
         }
-        else {
+        else{
             console.log("this question upload fail");
             //delete all files
-            for (let path in photo_path) {
+            for(let path in photo_path){
                 fs.unlink(path, (err) => {
-                    if (err) {
+                    if(err){
                         console.log(path, " cannot be delete Q");
                     }
                 });
             }
             //send failed response
-            utils.sendResponse(res, 200, JSON.stringify({ photo_status: 0 }));
+            utils.sendResponse(res, 200, JSON.stringify({photo_status: 0}));
         }
     });
 });
@@ -258,43 +258,41 @@ app.put('/updateQuestion', function (req, res) {
 
     console.log("---updateQuestion---");
     console.log(mode, user_update_data);
-    if (mode == "simple") {
+    if(mode == "simple"){
         db.Question.update( //update question status
             { status: 1 },
-            { where: { id: question_id } }
-        ).then(function () {
+            { where: { id: question_id }}
+        ).then(function(){
             //send response
             utils.sendResponse(res, 200, "success!");
         });
     }
-    else { //update this question for related db
+    else{ //update this question for related db
         db.Question.update( //update question status
-            {
-                status: 1,
-                name: new_name,
-                description: new_description
-            },
-            { where: { id: question_id } }
-        ).then(function () {
+            { status: 1,
+              name: new_name,
+              description: new_description },
+            { where: { id: question_id }}
+        ).then(function(){
             //update question group
             db.GroupMember.destroy({ //destroy old question group
-                where: { QuestionId: question_id }, force: true
-            }).then(function () { //create new question group
+                where: { QuestionId: question_id }, force:true
+            }).then(function(){ //create new question group
                 let new_selected_group_list = [];
-                new_selected_group.forEach((groupId) => {
+                new_selected_group.forEach((groupId)=>{
                     new_selected_group_list.push({
                         GroupId: groupId, QuestionId: question_id
                     });
                 });
 
-                db.GroupMember.bulkCreate(new_selected_group_list).then(function () {
+                db.GroupMember.bulkCreate(new_selected_group_list).then(function() {
                     //update picture order
                     db.Picture.destroy({ //destroy old picture
-                        where: { QuestionId: question_id }, force: true
-                    }).then(function () { //create new picture
+                        where: {QuestionId: question_id }, force:true
+                    }).then(function(){ //create new picture
                         let new_picture_list = [];
-                        for (let key in new_img_order) {
-                            if (new_img_order.hasOwnProperty(key)) {
+                        for(let key in new_img_order){
+                            if(new_img_order.hasOwnProperty(key)){
                                 new_picture_list.push({
                                     id: key,
                                     order: new_img_order[key],
@@ -304,7 +302,7 @@ app.put('/updateQuestion', function (req, res) {
                             }
                         }
                         // console.log(new_picture_list);
-                        db.Picture.bulkCreate(new_picture_list).then(function () {
+                        db.Picture.bulkCreate(new_picture_list).then(function(){
                             console.log("pic update done");
                             //send response
                             utils.sendResponse(res, 200, "success!");
@@ -317,61 +315,60 @@ app.put('/updateQuestion', function (req, res) {
 });
 
 // get QuestionStatus API
-app.get("/checkQuestionDeletable", function (req, res) {
+app.get("/checkQuestionDeletable", function(req, res){
     let question_id = req.query.question_id;
     console.log(question_id);
 
     console.log("---checkQuestionAvailable---");
-    db.Question.findOne({ where: { id: question_id } }).then(function (c) {
-        if (c != null) {
-            if (c.status == 1) {
+    db.Question.findOne({ where: {id: question_id} }).then(function(c){
+        if(c != null){
+            if(c.status == 1){
                 db.Group.findAll({
-                    where: { status: 1 },
+                    where: {status: 1},
                     include: [{
                         model: db.GroupMember,
-                        where: { QuestionId: question_id },
-                        reqired: true
-                    }]
+                        where: {QuestionId: question_id},
+                        reqired: true }]
                 }).then(GroupList => {
-                    if (GroupList.length > 0) { //using
+                    if(GroupList.length > 0){ //using
                         console.log(question_id, "is using !!");
-                        utils.sendResponse(res, 200, JSON.stringify({ using: 1 }));
+                        utils.sendResponse(res, 200, JSON.stringify({using: 1}));
                     }
-                    else { //safe to be deleted
+                    else{ //safe to be deleted
                         console.log(question_id, "is safe to be deleted");
-                        utils.sendResponse(res, 200, JSON.stringify({ using: 0 }));
+                        utils.sendResponse(res, 200, JSON.stringify({using: 0}));
                     }
                 });
             }
-            else { //safe to be deleted
+            else{ //safe to be deleted
                 console.log(question_id, " is safe to be deleted");
-                utils.sendResponse(res, 200, JSON.stringify({ using: 0 }));
+                utils.sendResponse(res, 200, JSON.stringify({using: 0}));
             }
         }
     })
 });
 
 // delete deleteQuestion API
-app.delete('/deleteQuestion', function (req, res) {
+app.delete('/deleteQuestion', function(req, res){
     let delete_question_id = req.body.delete_question_id;
 
     /* delete this question from all related tables */
     console.log("---deleteQuestion---");
     //unlink related picture files from server
-    db.Picture.findAll({ where: { QuestionId: delete_question_id } }).then(PictureList => {
+    db.Picture.findAll({ where: {QuestionId: delete_question_id} }).then(PictureList => {
         PictureList.forEach((PictureSetItem) => {
             let PictureData = PictureSetItem.get({ plain: true });
             let path = '../web/img/' + PictureData.id;
 
             fs.unlink(path, (err) => {
-                if (err) console.log(PictureData.id, ' cannot be deleted');
-                else console.log(PictureData.id, ' deleted');
+                if(err) console.log(PictureData.id, ' cannot be deleted');
+                else    console.log(PictureData.id, ' deleted');
             });
         });
 
         //delete all picture files from server storage
         console.log("all pictures have been successfully deleted from server storage");
-        db.Question.destroy({ where: { id: delete_question_id } }).then(function () {
+        db.Question.destroy({ where: { id: delete_question_id } }).then(function(){
             console.log("delete ", delete_question_id, " success");
 
             //send response
@@ -381,18 +378,18 @@ app.delete('/deleteQuestion', function (req, res) {
 });
 
 // get getGroup API
-app.get('/getGroup', function (req, res) {
+app.get('/getGroup', function(req, res){
     let mode = req.query.mode;
 
     console.log("---getGroup---");
     console.log("mode:", mode);
-    if (mode == "all") {
+    if(mode == "all"){
         let group_id = req.query.group_id,
             group_list = [];
 
         console.log("get all groups");
         db.Group.findAll({
-            order: [['id', 'ASC']],
+            order: [ ['id', 'ASC'] ],
         }).then(GroupList => {
             GroupList.forEach((GroupSetItem) => {
                 let GroupData = GroupSetItem.get({ plain: true });
@@ -410,7 +407,7 @@ app.get('/getGroup', function (req, res) {
             }));
         });
     }
-    else if (mode == "approved") {
+    else if(mode == "approved"){
         let group_list = [];
 
         console.log("get approved groups");
@@ -418,16 +415,14 @@ app.get('/getGroup', function (req, res) {
             order: [['id', 'ASC']],
             include: [{
                 model: db.GroupMember,
-                include: [{
+                include:[{
                     model: db.Question,
-                    where: { status: 1 },
-                    required: true
-                }],
-                required: true
-            }]
+                    where: {status: 1},
+                    required: true }],
+                required: true }]
         }).then(GroupList => {
             GroupList.forEach((GroupSetItem) => {
-                let GroupData = GroupSetItem.get({ plain: true });
+                let GroupData = GroupSetItem.get({plain: true});
                 group_list.push({
                     id: GroupData.id,
                     name: GroupData.name,
@@ -441,13 +436,13 @@ app.get('/getGroup', function (req, res) {
             }));
         });
     }
-    else if (mode == "pending") {
+    else if(mode == "pending"){
         let group_list = [];
 
         db.Question.findAll({
-            where: { status: 0 }
+            where: {status: 0}
         }).then(QuestionList => {
-            if (QuestionList.length > 0) {
+            if(QuestionList.length > 0){
                 group_list.push({
                     id: "all",
                     name: "不分類",
@@ -464,7 +459,7 @@ app.get('/getGroup', function (req, res) {
 });
 
 // post addGroup API
-app.post('/addGroup', function (req, res) {
+app.post('/addGroup', function(req, res){
     let group_name = req.body.newgroup_name,
         group_member = req.body.newgroup_member;
 
@@ -473,14 +468,14 @@ app.post('/addGroup', function (req, res) {
     console.log("add new group member:", group_member);
 
     let data = {
-        name: group_name,
-        status: 0,
+        name : group_name,
+        status : 0,
         GroupMembers: group_member
     };
 
-    db.Group.create(data, { include: [db.GroupMember] }).then(function () {
-        db.Group.findOne({ where: { name: group_name } }).then(function (g) {
-            if (g != null) {
+    db.Group.create(data, {include: [db.GroupMember]}).then(function(){
+        db.Group.findOne({where: {name: group_name}}).then(function(g){
+            if(g != null){
                 console.log("new group added success with group_id:", g.id);
 
                 // response
@@ -494,11 +489,11 @@ app.post('/addGroup', function (req, res) {
 });
 
 // delete deleteGroup API
-app.delete('/deleteGroup', function (req, res) {
+app.delete('/deleteGroup', function(req,res){
     let delete_group_id = req.body.delete_group_id;
     console.log("---deleteGroup---");
 
-    db.Group.destroy({ where: { id: delete_group_id } }).then(function () {
+    db.Group.destroy({where: { id: delete_group_id }}).then(function(){
         console.log("group_id:", delete_group_id, "successfully deleted");
 
         //send response
@@ -507,7 +502,7 @@ app.delete('/deleteGroup', function (req, res) {
 });
 
 // put updateGroup API
-app.put('/updateGroup', function (req, res) {
+app.put('/updateGroup', function(req, res){
     let mode = req.body.mode,
         update_group_id = req.body.update_group_id,
         update_group_name = req.body.update_group_name,
@@ -516,10 +511,10 @@ app.put('/updateGroup', function (req, res) {
 
     console.log("---updateGroup---");
     console.log("group:", update_group_id, "in mode:", mode, " is updating...");
-    if (mode == "add_member") {
+    if(mode == "add_member"){
         let new_groupmember_list = [];
 
-        group_list.forEach((element) => {
+        group_list.forEach((element)=>{
             new_groupmember_list.push({
                 GroupId: update_group_id,
                 QuestionId: element.question_id,
@@ -527,46 +522,46 @@ app.put('/updateGroup', function (req, res) {
         });
 
         //create new member
-        db.GroupMember.bulkCreate(new_groupmember_list).then(function () {
+        db.GroupMember.bulkCreate(new_groupmember_list).then(function(){
             //send response
             utils.sendResponse(res, 200, "success");
         });
     }
-    else if (mode == "delete_member") {
+    else if(mode == "delete_member"){
         let count = 0;
 
-        group_list.forEach((element) => {
+        group_list.forEach((element)=>{
             db.GroupMember.destroy({
                 where: {
                     GroupId: update_group_id,
                     QuestionId: element.question_id
                 },
                 force: true
-            }).then(function () {
+            }).then(function(){
                 console.log("delete ", element.question_id, "from group_id", update_group_id, "success");
                 count += 1;
-                if (count == group_list.length) {
+                if(count == group_list.length){
                     //send response
                     utils.sendResponse(res, 200, "success");
                 }
             });
         });
     }
-    else if (mode == "new_name") {
+    else if(mode == "new_name"){
         //do something
         db.Group.update(
             { name: update_group_name },
-            { where: { id: update_group_id } }
-        ).then(function () {
+            { where: {id: update_group_id} }
+        ).then(function(){
             console.log("update new_name", update_group_name);
             //send response
             utils.sendResponse(res, 200, "success");
         });
     }
-    else if (mode == "update_member") {
+    else if(mode == "update_member"){
         let new_groupmember_list = [];
 
-        group_list.forEach((element) => {
+        group_list.forEach((element)=>{
             new_groupmember_list.push({
                 GroupId: update_group_id,
                 QuestionId: element.question_id,
@@ -575,10 +570,10 @@ app.put('/updateGroup', function (req, res) {
 
         //destroy old member
         db.GroupMember.destroy({
-            where: { GroupId: update_group_id }, force: true
-        }).then(function () {
+                where: { GroupId: update_group_id }, force:true
+        }).then(function(){
             //create new member
-            db.GroupMember.bulkCreate(new_groupmember_list).then(function () {
+            db.GroupMember.bulkCreate(new_groupmember_list).then(function(){
                 //send response
                 utils.sendResponse(res, 200, "success");
             });
@@ -587,7 +582,7 @@ app.put('/updateGroup', function (req, res) {
 });
 
 //put setDisplayGroup API
-app.put('/setDisplayGroup', function (req, res) {
+app.put('/setDisplayGroup', function(req, res){
     let selected_group_list = req.body.selected_group_list,
         playlist = [];
 
@@ -595,21 +590,21 @@ app.put('/setDisplayGroup', function (req, res) {
     console.log("display group:", selected_group_list);
     db.Group.update( //let all group set to unuse
         { status: 0 },
-        { where: { status: 1 } }
-    ).then(function () {
-        if (selected_group_list.length == 0) {
+        { where: {status: 1} }
+    ).then(function(){
+        if(selected_group_list.length == 0){
             //send response
             utils.sendResponse(res, 200, "success");
         }
-        else {
+        else{
             let count = 0;
             selected_group_list.forEach((selected_group) => { //set selected group to use
                 db.Group.update(
                     { status: 1 },
-                    { where: { id: selected_group.id } }
-                ).then(function () {
+                    { where: {id: selected_group.id} }
+                ).then(function(){
                     count += 1;
-                    if (count == selected_group_list.length) {
+                    if(count == selected_group_list.length){
                         //send response
                         utils.sendResponse(res, 200, "success");
                     }
@@ -620,16 +615,16 @@ app.put('/setDisplayGroup', function (req, res) {
 });
 
 // get getGroupMember API
-app.get("/getGroupMember", function (req, res) {
+app.get("/getGroupMember", function(req, res){
     let group_id = req.query.group_id,
         status = req.query.status;
 
     console.log("---getGroupMember---");
     console.log("info:", req.query.info);
-    if (group_id == "all") {
-        if (req.query.info == "detail") {
+    if(group_id == "all"){
+        if(req.query.info == "detail"){
             db.Question.findAll({
-                where: { status: status },
+                where: {status: status},
                 order: [['createdAt', 'ASC']],
                 include: [{
                     model: db.GroupMember,
@@ -643,7 +638,7 @@ app.get("/getGroupMember", function (req, res) {
                     group_id_list = [],
                     group_name_list = [];
                 GroupMemberList.forEach((GroupMember) => {
-                    let GroupMemberData = GroupMember.get({ plain: true });
+                    let GroupMemberData = GroupMember.get({plain:true});
                     group_id_list = [], group_name_list = [];
                     GroupMemberData.GroupMembers.forEach((GroupMemberSetItem) => {
                         group_id_list.push(GroupMemberSetItem.GroupId);
@@ -667,14 +662,14 @@ app.get("/getGroupMember", function (req, res) {
                 }));
             });
         }
-        else {
+        else{
             db.Question.findAll({
-                where: { status: status },
+                where: {status: status},
                 order: [['createdAt', 'ASC']]
             }).then(GroupMemberList => {
                 let question_list = [];
                 GroupMemberList.forEach((GroupMember) => {
-                    let GroupMemberData = GroupMember.get({ plain: true });
+                    let GroupMemberData = GroupMember.get({plain:true});
                     question_list.push({
                         id: GroupMemberData.id,
                         name: GroupMemberData.name,
@@ -690,48 +685,46 @@ app.get("/getGroupMember", function (req, res) {
             });
         }
     }
-    else {
+    else{
         db.GroupMember.findAll({
-            where: { GroupId: group_id },
+            where: {GroupId: group_id},
             include: [{
                 model: db.Question,
-                where: { status: status },
+                where: {status: status},
                 order: [['createdAt', 'ASC']],
-                required: true
-            }],
+                required: true }],
             required: true
         }).then(GroupMemberList => {
             let question_list = [];
 
-            if (GroupMemberList.length == 0) {
+            if(GroupMemberList.length == 0){
                 console.log(question_list);
                 utils.sendResponse(res, 200, JSON.stringify({
                     question_list: question_list
                 }));
             }
-            else {
+            else{
                 let count = 0;
 
                 GroupMemberList.forEach((GroupMember) => {
-                    let GroupMemberData = GroupMember.get({ plain: true });
+                    let GroupMemberData = GroupMember.get({plain:true});
 
                     //for group
-                    if (req.query.info == "detail") {
+                    if(req.query.info == "detail"){
                         let group_id_list = [],
                             group_name_list = [];
 
                         db.GroupMember.findAll({
-                            where: { QuestionId: GroupMemberData.Question.id },
+                            where: {QuestionId: GroupMemberData.Question.id},
                             include: [{
                                 model: db.Group,
-                                required: true
-                            }]
+                                required: true }]
                         }).then(GroupList => {
                             group_id_list = [],
-                                group_name_list = [];
+                            group_name_list = [];
 
                             GroupList.forEach((GroupSetItem) => {
-                                let GroupData = GroupSetItem.get({ plain: true });
+                                let GroupData = GroupSetItem.get({plain:true});
                                 group_id_list.push(GroupData.GroupId);
                                 group_name_list.push(GroupData.Group.name);
                             });
@@ -745,7 +738,7 @@ app.get("/getGroupMember", function (req, res) {
                             });
 
                             count += 1;
-                            if (count == GroupMemberList.length) {
+                            if(count == GroupMemberList.length){
                                 console.log(question_list);
                                 utils.sendResponse(res, 200, JSON.stringify({
                                     question_list: question_list
@@ -753,7 +746,7 @@ app.get("/getGroupMember", function (req, res) {
                             }
                         });
                     }
-                    else {
+                    else{
                         question_list.push({
                             id: GroupMemberData.Question.id,
                             name: GroupMemberData.Question.name,
@@ -762,7 +755,7 @@ app.get("/getGroupMember", function (req, res) {
                     }
                 });
 
-                if (req.query.info != "detail") {
+                if(req.query.info != "detail"){
                     // response
                     console.log(question_list);
                     utils.sendResponse(res, 200, JSON.stringify({
@@ -774,7 +767,7 @@ app.get("/getGroupMember", function (req, res) {
     }
 });
 
-function send_page_response(res, pagename, isadmin = false, group_item = {}) {
+function send_page_response(res, pagename, isadmin=false, group_item={}){
     let group_list = [],
         pending_group_list = [],
         approved_group_list = [];
@@ -795,7 +788,7 @@ function send_page_response(res, pagename, isadmin = false, group_item = {}) {
         //get pending group
         db.Question.findAll({
             order: [['id', 'ASC']],
-            where: { status: 0 }
+            where: {status: 0}
         }).then(pendingGroupList => {
             pendingGroupList.forEach((pendingGroupSetItem) => {
                 let pendingGroupData = pendingGroupSetItem.get({ plain: true });
@@ -812,11 +805,9 @@ function send_page_response(res, pagename, isadmin = false, group_item = {}) {
                     model: db.GroupMember,
                     include: [{
                         model: db.Question,
-                        where: { status: 1 },
-                        required: true
-                    }],
-                    required: true
-                }]
+                        where: {status: 1},
+                        required: true }],
+                    required: true }]
             }).then(approvedGroupList => {
                 approvedGroupList.forEach((approvedGroupSetItem) => {
                     let approvedGroupData = approvedGroupSetItem.get({ plain: true });
@@ -846,34 +837,34 @@ function send_page_response(res, pagename, isadmin = false, group_item = {}) {
 
 /* web page */
 // manage pages
-app.get("/manage", utils.auth, function (req, res) {
+app.get("/manage", utils.auth, function(req, res){
     send_page_response(res, "manage.html", true);
 });
 
-app.get("/manage/:functionpage", utils.auth, function (req, res) {
+app.get("/manage/:functionpage", utils.auth, function(req, res){
     let functionpage = req.params.functionpage;
 
-    if (!(functionpage == "upload" || functionpage == "pending" ||
-        functionpage == "approved" || functionpage == "display")) {
+    if(!(functionpage == "upload" || functionpage == "pending" ||
+         functionpage == "approved" || functionpage == "display")){
         res.status(404).send("page not found");
     }
-    else {
+    else{
         send_page_response(res, functionpage + ".html", true);
     }
 });
 
-app.get("/manage/group/:group_id", utils.auth, function (req, res) {
+app.get("/manage/group/:group_id", utils.auth, function(req, res){
     let group_id = req.params.group_id;
 
-    if (group_id == "all") {
-        send_page_response(res, "group.html", true, { id: "all", name: "全部" });
+    if(group_id == "all"){
+        send_page_response(res, "group.html", true, {id:"all", name:"全部"});
     }
-    else {
-        db.Group.findOne({ where: { id: group_id } }).then(function (c) {
-            if (c != null) {
-                send_page_response(res, "group.html", true, { id: c.id, name: c.name, status: c.status });
+    else{
+        db.Group.findOne({where:{id :group_id}}).then(function(c){
+            if(c != null){
+                send_page_response(res, "group.html", true, {id:c.id, name:c.name, status:c.status});
             }
-            else {
+            else{
                 res.status(404).send("page not found");
             }
         });
