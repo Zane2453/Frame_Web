@@ -70,6 +70,16 @@ def push():
     Web[int(data["p_id"])].push(data["idf"], data["data"])
     return jsonify({"result": "Push Successful!"})
 
+@app.route('/getExpiredTime', methods=['GET'], strict_slashes=False)
+@cross_origin()
+def getTimer():
+    data = request.get_json()
+    mode = data["mode"]
+    stage = data["stage"]
+
+    timer = query.get_timer(mode, stage)
+    return jsonify({'timer': timer})
+
 @app.route('/group', methods=['GET'], strict_slashes=False)
 @cross_origin()
 def getGroup():
