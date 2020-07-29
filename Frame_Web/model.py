@@ -34,6 +34,13 @@ class GroupMember(Base):
     questionId = Column(String(255), ForeignKey('Questions.id'))
     groupId = Column(Integer, ForeignKey('Groups.id'))
 
+class Timer(Base):
+    __tablename__ = 'Timers'
+    id = Column(Integer, primary_key=True)
+    mode = Column(String(255))
+    stage = Column(String(255))
+    value = Column(Integer)
+
 ######################################
 engine = None
 

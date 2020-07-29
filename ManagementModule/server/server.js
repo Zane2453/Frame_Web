@@ -18,10 +18,6 @@ let uploadFolder = './upload_cache/';
 utils.createFolder(uploadFolder);
 /******/
 
-// modified 2019/12/03
-// Expired timer
-var expired_time = 50;
-
 // modified 2020/03/07
 // cors for portraitImages
 const corsOptions = {
@@ -54,18 +50,51 @@ console.log('---server start---');
 http.listen((process.env.PORT || config.MngtServerPort), '0.0.0.0');
 
 /* APIs */
-// modified 2019/12/03
+// modified 2020/07/29
 // get expired time
 app.get("/getExpiredTime", function(req, res){
-    //response
-    utils.sendResponse(res, 200, JSON.stringify(expired_time));
+    /*{
+        mode: ,
+        stage:
+    }*/
+    let mode = req.body.mode,
+        stage = req.body.stage;
+
+    // Get the Timer value
+    db.Timer.findOne({
+        where: {mode: mode,
+                stage: stage}
+    }).then(timer => {
+        if(timer){
+            var expired_time = {
+                value: timer.value
+            };
+            //response
+            utils.sendResponse(res, 200, JSON.stringify(expired_time));
+        } else{
+            utils.sendResponse(res, 400, "Bad Request");
+        }
+    });
 });
 
 // set expired time
 app.post("/setExpiredTime", function(req, res){
-    expired_time = req.body.expired_time;
-    //response
-    utils.sendResponse(res, 200, JSON.stringify(expired_time));
+    /*{
+        mode: ,
+        stage: ,
+        value: 
+    }*/
+    let mode = req.body.mode,
+        stage = req.body.stage,
+        timer = req.body.value;
+
+    db.Timer.update( //update Timer value
+        { value: timer },
+        { where: {mode: mode, stage: stage}}
+    ).then(function(){
+        //send response
+        utils.sendResponse(res, 200, "success!");
+    });
 });
 
 // get getQuestion API

@@ -65,6 +65,23 @@ const GroupMember = sequelize.define('GroupMember', {
     
 });
 
+const Timer = sequelize.define('Timer', {
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    mode: {
+        type: Sequelize.STRING
+    },
+    stage: {
+        type: Sequelize.STRING
+    },
+    value: {
+        type: Sequelize.INTEGER
+    }
+})
+
 // Group.id <-> GroupMember.GroupId
 Group.hasMany(GroupMember, {onDelete: 'cascade', hooks:true});
 GroupMember.belongsTo(Group);
@@ -82,7 +99,8 @@ var db = {
     Question: Question,
     GroupMember: GroupMember,
     Group: Group,
-    Picture: Picture
+    Picture: Picture,
+    Timer: Timer
 };
 
 exports.db = db;

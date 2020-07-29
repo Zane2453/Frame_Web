@@ -13,6 +13,7 @@ function create_db(){
     db.GroupMember.sync({force: false}).then(function(){});
     db.Question.sync({force: false}).then(function(){});
     db.Group.sync({force: false}).then(function(){});
+    db.Timer.sync({force: false}).then(function(){});
 
     set_db_init_value();
 }
@@ -140,6 +141,16 @@ function set_db_init_value(){
             { group: [24], dirname: "寶嘉康蒂,Pocahontas,1596-1617"},
             { group: [9], dirname: "蘇亞雷斯,Vicente Suarez,1833-1847"},
             { group: [5,7,17], dirname: "蘭福德,Nathaniel Pitt Langford,1832-1911"}
+        ],
+        default_timer = [
+            { mode: "unclassified", stage: "mode", value: 50 },
+            { mode: "guess", stage: "group", value: 50 },
+            { mode: "guess", stage: "game", value: 50 },
+            { mode: "guess", stage: "end", value: 50 },
+            { mode: "shake", stage: "group", value: 50 },
+            { mode: "shake", stage: "member", value: 50 },
+            { mode: "shake", stage: "game", value: 50 },
+            { mode: "shake", stage: "end", value: 50 }
         ];
 
     db.Group.bulkCreate(default_group).then(function(){
@@ -186,6 +197,9 @@ function set_db_init_value(){
                 }
             });
         });
+    });
+    db.Timer.bulkCreate(default_timer).then(function(){
+        console.log("--- set db default [timer] value done ---");
     });
 }
 

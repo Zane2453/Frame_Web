@@ -64,6 +64,16 @@ def bind(s_id):
     utlis.bind_frame(p_id, do_id, d_id)
     return jsonify({"result": "Success Binding"})
 
+@app.route('/getExpiredTime', methods=['GET'], strict_slashes=False)
+@cross_origin()
+def getTimer():
+    data = request.get_json()
+    mode = data["mode"]
+    stage = data["stage"]
+
+    timer = query.get_timer(mode, stage)
+    return jsonify({'timer': timer})
+
 @app.route('/group', methods=['GET'], strict_slashes=False)
 @cross_origin()
 def getGroup():

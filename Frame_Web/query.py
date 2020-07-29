@@ -1,5 +1,5 @@
 from model import (connect, get_session,
-                   Question, Picture, Group, GroupMember)
+                   Question, Picture, Group, GroupMember, Timer)
 
 connect()
 db_session = get_session()
@@ -77,3 +77,16 @@ def get_answer_pic(questio_id):
 
     print("[DB] get %s picture data success" % questio_id)
     return picture_data
+
+def get_timer(mode, stage):
+    query = (db_session
+             .query(Timer.value)
+             .select_from(Timer)
+             .filter(Timer.mode == mode)
+             .filter(Timer.stage == stage)
+             .first())
+    for timer_value in query:
+        timer = timer_value
+
+    print(f"[DB] get mode {mode} and stage {stage} timer data success")
+    return timer
