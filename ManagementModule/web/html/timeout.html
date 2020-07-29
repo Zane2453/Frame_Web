@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <% include partials/meta.html %>
+        <script type="text/javascript" src="/js/timeout.js"></script>
+        <style>
+            .container {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .accordion {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                border-bottom: none;
+            }
+
+            .card {
+                width: 100%;
+            }
+        </style>
+    </head>
+
+    <body>
+        <% include partials/modal.html %>
+        <% include partials/navbar.html %>
+        <div class="container">
+            <h2 class="center top">逾時設定</h2>
+            <br>
+            <div id="timeout-accordion" class="accordion"></div>
+        </div>
+    </body>
+
+</html>

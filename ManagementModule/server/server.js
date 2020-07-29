@@ -50,6 +50,19 @@ console.log('---server start---');
 http.listen((process.env.PORT || config.MngtServerPort), '0.0.0.0');
 
 /* APIs */
+// added 2020/07/30
+// get all expired time
+app.get("/getAllExpiredTime", function(req, res){
+    // Get all Timer
+    db.Timer.findAll().then(timers => {
+        if(timers.length){
+            utils.sendResponse(res, 200, JSON.stringify(timers));
+        } else{
+            utils.sendResponse(res, 400, "Bad Request");
+        }
+    });
+});
+
 // modified 2020/07/29
 // get expired time
 app.get("/getExpiredTime", function(req, res){
@@ -874,7 +887,7 @@ app.get("/manage/:functionpage", utils.auth, function(req, res){
     let functionpage = req.params.functionpage;
 
     if(!(functionpage == "upload" || functionpage == "pending" ||
-         functionpage == "approved" || functionpage == "display")){
+         functionpage == "approved" || functionpage == "display" || functionpage =="timeout")){
         res.status(404).send("page not found");
     }
     else{
