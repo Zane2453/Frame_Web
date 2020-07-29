@@ -60,7 +60,7 @@ nsp.on('connection', function(socket){
     });
     //8
     socket.on("Acceleration", function(msg){
-        push(msg["p_id"], 'Acceleration', msg);
+        push(msg["p_id"], 'Acceleration', msg["data"]);
     });
     //ws disconnect
     socket.on("disconnect", function(msg){
