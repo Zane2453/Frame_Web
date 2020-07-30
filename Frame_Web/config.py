@@ -1,8 +1,8 @@
 class Config(object):
     host = 'localhost'
     port = '5000'
-    csm_api = 'https://iottalk2.tw/csm'
-    ccm_api = 'https://iottalk2.tw/api/v0'
+    csm_api = 'http://140.113.199.211:8080/csm'
+    ccm_api = 'http://140.113.199.211:8080/api/v0'
     idm = {
         'name': 'PGSmartphone',
         'idf_list': [
