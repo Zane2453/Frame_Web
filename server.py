@@ -73,11 +73,17 @@ def push():
 @app.route('/getExpiredTime', methods=['GET'], strict_slashes=False)
 @cross_origin()
 def getTimer():
-    data = request.get_json()
-    mode = data["mode"]
-    stage = data["stage"]
+    # i.e. http://localhost:5000/getExpiredTime?mode=guess&stage=game
+    mode = request.args.get("mode")
+    stage = request.args.get("stage")
 
     timer = query.get_timer(mode, stage)
+    return jsonify({'timer': timer})
+
+@app.route('/getAllExpiredTime', methods=['GET'], strict_slashes=False)
+@cross_origin()
+def getAllTimer():
+    timer = query.get_all_timer()
     return jsonify({'timer': timer})
 
 @app.route('/group', methods=['GET'], strict_slashes=False)
