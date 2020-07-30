@@ -64,32 +64,6 @@ app.get("/getAllExpiredTime", function(req, res){
 });
 
 // modified 2020/07/29
-// get expired time
-app.get("/getExpiredTime", function(req, res){
-    /*{
-        mode: ,
-        stage:
-    }*/
-    let mode = req.body.mode,
-        stage = req.body.stage;
-
-    // Get the Timer value
-    db.Timer.findOne({
-        where: {mode: mode,
-                stage: stage}
-    }).then(timer => {
-        if(timer){
-            var expired_time = {
-                value: timer.value
-            };
-            //response
-            utils.sendResponse(res, 200, JSON.stringify(expired_time));
-        } else{
-            utils.sendResponse(res, 400, "Bad Request");
-        }
-    });
-});
-
 // set expired time
 app.post("/setExpiredTime", function(req, res){
     /*{

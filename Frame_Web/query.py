@@ -90,3 +90,17 @@ def get_timer(mode, stage):
 
     print(f"[DB] get mode {mode} and stage {stage} timer data success")
     return timer
+
+def get_all_timer():
+    query = (db_session
+             .query(Timer.mode,
+                    Timer.stage,
+                    Timer.value)
+             .select_from(Timer)
+             .all())
+    timer = []
+    for timer_mode, timer_stage, timer_value in query:
+        timer.append({"mode": timer_mode, "stage": timer_stage, "value": timer_value})
+
+    print(f"[DB] get all timer data success")
+    return timer 
