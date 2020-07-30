@@ -30,13 +30,27 @@ def create_frame(uuid):
     weather_id =api.deviceobject.create(p_id, 'Weather', ['Name-I'], session=session)
 
     # Set the Network Application of FrameTalk Project
-    api.networkapplication.create(p_id, [(ido_id, 'Acceleration'), (odo_id, 'Forward'), (odo_id, 'End')], session=session)
+    na_id = api.networkapplication.create(p_id, [(ido_id, 'Acceleration'), (odo_id, 'Forward'), (odo_id, 'End')], session=session)
     api.networkapplication.create(p_id, [(ido_id, 'Correct'), (odo_id, 'End')], session=session)
     api.networkapplication.create(p_id, [(ido_id, 'Wrong'), (odo_id, 'Forward')], session=session)
     api.networkapplication.create(p_id, [(ido_id, 'Name-I'), (odo_id, 'Name-O')], session=session)
     api.networkapplication.create(p_id, [(ido_id, 'Play-I'), (odo_id, 'Mode')], session=session)
     api.networkapplication.create(p_id, [(ido_id, 'PlayAck-O'), (odo_id, 'PlayAck-I')], session=session)
     api.networkapplication.create(p_id, [(weather_id, 'Name-I'), (odo_id, 'Name-O')], session=session)
+
+    na_info = api.networkapplication.get(p_id, na_id, session=session)
+
+    dfm_list = []
+    for index in na_info['input']:
+        dfm_list.append({"dfo_id": index['dfo_id'], "dfmp_list": index['dfmp']})
+    for index in na_info['output']:
+        dfm_list.append({"dfo_id": index['dfo_id'], "dfmp_list": index['dfmp']})
+
+    dfm_list[0]['dfmp_list'][0]['fn_id'] = 8
+    dfm_list[1]['dfmp_list'][0]['fn_id'] = 20
+    dfm_list[2]['dfmp_list'][0]['fn_id'] = 21
+
+    api.networkapplication.update(p_id, na_id, dfm_list, 'Join1', session=session)
 
     print(f"Create Frame Successfully!\nProject ID {p_id}, PGSmartphone ID {ido_id}, PortraitGuess ID {odo_id}")
 
@@ -94,27 +108,19 @@ class DAI():
 
     def register(self):
         self.dan.register(
-            "https://iottalk2.tw/csm",
-            on_signal=self.on_signal,
-            on_data=self.on_data,
-            idf_list=[
-                ['Acceleration', ['int', 'int', 'int']],
-                ['Correct', ['int']],
-                ['Name-I', ['string']],
-                ['Play-I', ['string']],
-                ['Wrong', ['int']]
-            ],
-            odf_list=[
-                ['PlayAck-O', ['string']]
-            ],
-            accept_protos=['mqtt'],
-            name=f"Smartphone_{self.d_id}",
-            id_=self.d_id,
-            profile={
-                'model': "PGSmartphone"
+            env_config.csm_api,
+            on_signal = self.on_signal,
+            on_data = self.on_data,
+            idf_list = env_config.idm['idf_list'],
+            odf_list = env_config.idm['odf_list'],
+            accept_protos = ['mqtt'],
+            name = f"Smartphone_{self.d_id}",
+            id_ = self.d_id,
+            profile = {
+                'model': env_config.idm['name']
             },
-            on_register=self.on_register,
-            on_deregister=self.on_deregister
+            on_register = self.on_register,
+            on_deregister = self.on_deregister
         )
     def deregister(self):
         self.dan.deregister()

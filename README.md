@@ -75,6 +75,12 @@ There is one part of FrameTalk system written in Web Mode: GameModule.
     ```
 5. IoTtalk NetworkApplication API
     ```python
+    # Get NetworkApplication Information of Certain Project
+    api.networkapplication.get(project_id, session=session)
+   
+    # Get NetworkApplication Information
+    api.networkapplication.get(project_id, na_id, session=session)
+   
     # Create NetworkApplication
     # 此 "join" 參數為  a list of "(device_object_id, device_feature_id or name)" pair
     api.networkapplication.create(project_id, joins, session=session)
