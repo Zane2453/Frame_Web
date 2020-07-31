@@ -75,11 +75,11 @@ nsp.on('connection', function(socket){
                     if(daList[p_id]["player_dict"][uuid] == daList[p_id]["playing_socket"]){
                         console.log("[ws] Leave", msg);
                         push(p_id, "Play-I", [JSON.stringify({ op: "Leave", uuid: uuid })]);
-                        daList[p_id]["player_dict"]["playing_socket"] = undefined;
+                        daList[p_id]["playing_socket"] = undefined;
                     }
 
                     console.log("[server] delete Player", uuid);
-                    delete daList[p_id]["player_dict"][msg];
+                    delete daList[p_id]["player_dict"][uuid];
                 }
             }
         }
