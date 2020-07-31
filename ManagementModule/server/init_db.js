@@ -46,7 +46,7 @@ function set_db_init_value(){
             { status : 1, name : "英雄" },
             { status : 1, name : "服裝設計師" },
             { status : 1, name : "虛擬角色" },
-            { status : 1, name : "賽車手" },
+            { status : 0, name : "賽車手" },
             { status : 1, name : "發明家" }, //26
             { status : 1, name : "教育家" }
         ],
