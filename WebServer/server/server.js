@@ -135,7 +135,12 @@ app.post("/register", function(req, res){
 
 app.post("/deregister", function(req, res){
     var p_id = req.body.p_id;
-    delete daList[p_id];
+    if(daList.hasOwnProperty(p_id)){
+        for(let uuid in daList[p_id]["player_dict"]){
+            daList[p_id]["player_dict"][uuid].emit("End");
+        }
+        delete daList[p_id];
+    }
     console.log("Delete WebServer " + String(p_id) + " Successful!");
     utils.sendResponse(res, 200, "[sys] Successful Deregister PGSmartphone!");
 });
