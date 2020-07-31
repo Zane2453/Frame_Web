@@ -419,7 +419,10 @@ $(function(){
         console.log("ws close ", msg);
         window.location = location.origin + "/endPage";
     });
-
+    // modified 2020/07/31
+    socket.on("End", function(){
+        window.location = location.origin + "/endPage";
+    });
     // timeout enter geEndPage()
     var checkTimeout = setInterval(function(){
         let now = new Date();

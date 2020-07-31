@@ -34,6 +34,7 @@ const nsp = io.of('/');
 nsp.on('connection', function(socket){
     //1
     socket.on("PlayReq", function(msg){
+        // modified 2020/07/31
         if(daList.hasOwnProperty(msg["p_id"])){
             if(!daList[msg["p_id"]]["player_dict"].hasOwnProperty(msg["uuid"])){
                 console.log("[server] add Player", msg);
@@ -43,6 +44,8 @@ nsp.on('connection', function(socket){
 
             //2
             push(msg["p_id"], 'Play-I', [JSON.stringify({ op: "PlayReq", uuid: msg["uuid"] })]);
+        } else{
+            socket.emit("End");
         }
     });
 
