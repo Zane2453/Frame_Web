@@ -34,14 +34,16 @@ const nsp = io.of('/');
 nsp.on('connection', function(socket){
     //1
     socket.on("PlayReq", function(msg){
-        if(!daList[msg["p_id"]]["player_dict"].hasOwnProperty(msg)){
-            console.log("[server] add Player", msg);
-            daList[msg["p_id"]]["player_dict"][msg["uuid"]] = socket;
-        }
-        console.log("[ws] PlayReq", msg);
+        if(daList.hasOwnProperty(msg["p_id"])){
+            if(!daList[msg["p_id"]]["player_dict"].hasOwnProperty(msg["uuid"])){
+                console.log("[server] add Player", msg);
+                daList[msg["p_id"]]["player_dict"][msg["uuid"]] = socket;
+            }
+            console.log("[ws] PlayReq", msg);
 
-        //2
-        push(msg["p_id"], 'Play-I', [JSON.stringify({ op: "PlayReq", uuid: msg["uuid"] })]);
+            //2
+            push(msg["p_id"], 'Play-I', [JSON.stringify({ op: "PlayReq", uuid: msg["uuid"] })]);
+        }
     });
 
     //4 //6
