@@ -19,6 +19,7 @@ window.configs = {
 	odo_id: undefined,
 	dev_name: undefined,
 	client_url: undefined,
+	timer: undefined,
 }
 
 $(function () {

@@ -35,6 +35,7 @@ def getInit():
     p_id, ido_id, odo_id, dev_name = utlis.create_frame(gen_uuid())
     # p_id, ido_id, odo_id = 17, 51, 52
     # dev_name = f'Frame_{gen_uuid()}
+    timer = query.get_all_timer()
     initConfig = {
         'csm_url': env_config.csm_api,
         'dm_name': env_config.odm['name'],
@@ -44,7 +45,8 @@ def getInit():
         'ido_id': ido_id,
         'odo_id': odo_id,
         'dev_name': dev_name,
-        'client_url': env_config.webServer['url'] + ":" + str(env_config.webServer['port']) + "/game?p_id=" + str(p_id) + "&od_id=" + str(ido_id)
+        'client_url': env_config.webServer['url'] + ":" + str(env_config.webServer['port']) + "/game?p_id=" + str(p_id) + "&od_id=" + str(ido_id),
+        'timer': timer
     }
     return jsonify({'initConfig': initConfig})
 
