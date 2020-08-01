@@ -16,6 +16,7 @@ function hideall(){
     $("#successName").hide();
     $("#successAlert").hide();
     $("#successImage").hide();
+    $("#failImage").hide();
     $("#shakeImage").hide();
 }
 
@@ -173,6 +174,8 @@ function displayMember(memberList){
 
 function displayShakeInfo(){
     hideall();
+
+    chance_count = chance;
 
     console.log("sensor page");
     $("#back_menu").show();

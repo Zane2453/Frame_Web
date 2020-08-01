@@ -105,6 +105,7 @@ function checkResult(index){
         $("#successName").html(optionList[answer_idxx] + "<br>" + answer_description);
         $("#successName").show();
         $("#successImage").show();
+        $("#failImage").hide();
         $("#wrongAlert").hide();
         $("#options").hide();
         $("#prompt").hide();
@@ -134,6 +135,7 @@ function checkResult(index){
             $("#successAlert").show();
             $("#successName").html(optionList[answer_idxx] + '<br>' + answer_description);
             $("#successName").show();
+            $("#failImage").show();
             $("#wrongAlert").hide();
             $("#options").hide();
             $("#prompt").hide();
@@ -153,6 +155,7 @@ function checkResult(index){
             $("#successAlert").hide();
             $("#successName").hide();
             $("#successImage").hide();
+            $("#failImage").hide();
         }
     }
 }

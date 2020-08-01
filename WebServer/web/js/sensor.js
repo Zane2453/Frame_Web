@@ -37,6 +37,21 @@ function sendAccData(raw_data){
             //removeEventListener
             stop_sensor_data();
 
+            chance_count = chance;
+            $("#successAlert").html("Nice Job! I am");
+            $("#successAlert").show();
+            $("#successName").html(answer_name + "<br>" + answer_description);
+            $("#successName").show();
+            $("#wrongAlert").hide();
+            $("#options").hide();
+            $("#prompt").hide();
+            $("#prompt2").hide();
+            $("#prompt3").hide();
+            $("#chance").hide();
+            $("#back_menu").hide();
+            $("#prompt6").hide();
+            $("#shakeImage").hide();
+
             // sendResult("Correct");
             sendShakeData(raw_data);
 

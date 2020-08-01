@@ -98,7 +98,7 @@ ul{
     /*overflow:auto;*/
     overflow-y: scroll;
 }
-#successImage{
+#successImage, #failImage{
     display: block;
     margin: auto;
     width: 125px;
