@@ -45,13 +45,17 @@ def index():
 @cross_origin()
 def bind(s_id):
     # Get the PortraitGuess Project ID and Device Object ID
-    p_id = int(Frame[s_id]['p_id'])
-    do_id = int(Frame[s_id]['do_id'])
-    d_id = Frame[s_id]['d_id']
+    if s_id in Frame:
+        p_id = int(Frame[s_id]['p_id'])
+        do_id = int(Frame[s_id]['do_id'])
+        d_id = Frame[s_id]['d_id']
 
-    # Bind the PortraitGuess
-    utlis.bind_frame(p_id, do_id, d_id)
-    return jsonify({"result": "Success Binding"})
+        # Bind the PortraitGuess
+        utlis.bind_frame(p_id, do_id, d_id)
+        return jsonify({"result": "Success Binding"})
+
+    else:
+        return jsonify({"result": "Fail Binding"}), 404
 
 @app.route('/leave', methods=['POST'], strict_slashes=False)
 @cross_origin()
