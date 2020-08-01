@@ -58,11 +58,14 @@ def push():
 @app.route('/bind/<string:s_id>', methods=['POST'], strict_slashes=False)
 @cross_origin()
 def bind(s_id):
-    p_id = int(Frame[s_id]['p_id'])
-    do_id = int(Frame[s_id]['do_id'])
-    d_id = Frame[s_id]['d_id']
-    utlis.bind_frame(p_id, do_id, d_id)
-    return jsonify({"result": "Success Binding"})
+    if s_id in Frame:
+        p_id = int(Frame[s_id]['p_id'])
+        do_id = int(Frame[s_id]['do_id'])
+        d_id = Frame[s_id]['d_id']
+        utlis.bind_frame(p_id, do_id, d_id)
+        return jsonify({"result": "Success Binding"})
+    else:
+        return jsonify({"result": "Fail Binding"}), 404
 
 @app.route('/getExpiredTime', methods=['GET'], strict_slashes=False)
 @cross_origin()
