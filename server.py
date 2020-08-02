@@ -88,7 +88,7 @@ def getTimer():
 @cross_origin()
 def getAllTimer():
     timer = query.get_all_timer()
-    return jsonify({'timer': timer})
+    return jsonify(timer)
 
 @app.route('/group', methods=['GET'], strict_slashes=False)
 @cross_origin()

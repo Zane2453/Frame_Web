@@ -98,9 +98,13 @@ def get_all_timer():
                     Timer.value)
              .select_from(Timer)
              .all())
-    timer = []
+    timer = {}
     for timer_mode, timer_stage, timer_value in query:
-        timer.append({"mode": timer_mode, "stage": timer_stage, "value": timer_value})
+        if timer_mode in timer:
+            timer[timer_mode][timer_stage] = timer_value
+        else:
+            timer[timer_mode] = {}
+            timer[timer_mode][timer_stage] = timer_value
 
     print(f"[DB] get all timer data success")
     return timer
