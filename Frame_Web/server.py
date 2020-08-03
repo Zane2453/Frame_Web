@@ -3,7 +3,7 @@ from flask import Flask
 from flask import render_template, jsonify, request
 from flask_socketio import SocketIO, emit
 from flask_bootstrap import Bootstrap
-from flask_cors import cross_origin
+from flask_cors import CORS
 import uuid, requests
 
 from config import env_config
@@ -17,12 +17,12 @@ Web = {}
 
 ''' Initialize Flask '''
 app = Flask(__name__,template_folder="templates",static_folder="static",static_url_path="/static")
+CORS(app, resources={r"/.*": {"origins": ["http://localhost:3000"]}}) 
 bootstrap = Bootstrap(app)
 socketio = SocketIO(app, cors_allowed_origins='*')
 
 ''' Server Route '''
 @app.route("/", methods=['GET'], strict_slashes=False)
-@cross_origin()
 def index():
     #p_id, ido_id, odo_id, dev_name = utlis.create_frame(len(Frame)+1)
     #p_id, ido_id, odo_id = 17, 51, 52
@@ -30,7 +30,6 @@ def index():
     return render_template("index.html")
 
 @app.route('/init', methods=['GET'], strict_slashes=False)
-@cross_origin()
 def getInit():
     p_id, ido_id, odo_id, dev_name = utlis.create_frame(gen_uuid())
     # p_id, ido_id, odo_id = 17, 51, 52
@@ -51,14 +50,12 @@ def getInit():
     return jsonify({'initConfig': initConfig})
 
 @app.route('/push', methods=['POST'], strict_slashes=False)
-@cross_origin()
 def push():
     data = request.get_json()
     Web[int(data["p_id"])].push(data["idf"], data["data"])
     return jsonify({"result": "Push Successful!"})
 
 @app.route('/bind/<string:s_id>', methods=['POST'], strict_slashes=False)
-@cross_origin()
 def bind(s_id):
     if s_id in Frame:
         p_id = int(Frame[s_id]['p_id'])
@@ -70,7 +67,6 @@ def bind(s_id):
         return jsonify({"result": "Fail Binding"}), 404
 
 @app.route('/getExpiredTime', methods=['GET'], strict_slashes=False)
-@cross_origin()
 def getTimer():
     # i.e. http://localhost:5000/getExpiredTime?mode=guess&stage=game
     mode = request.args.get("mode")
@@ -80,25 +76,21 @@ def getTimer():
     return jsonify({'timer': timer})
 
 @app.route('/getAllExpiredTime', methods=['GET'], strict_slashes=False)
-@cross_origin()
 def getAllTimer():
     timer = query.get_all_timer()
     return jsonify(timer)
 
 @app.route('/group', methods=['GET'], strict_slashes=False)
-@cross_origin()
 def getGroup():
     group_list = query.get_group_list()
     return jsonify({'group_list': group_list})
 
 @app.route('/group/<string:g_id>', methods=['GET'], strict_slashes=False)
-@cross_origin()
 def getMember(g_id):
     member_list = query.get_member_list(g_id)
     return jsonify({'member_list': member_list})
 
 @app.route('/member/<string:m_id>', methods=['GET'], strict_slashes=False)
-@cross_origin()
 def getPicture(m_id):
     picture_list = query.get_answer_pic(m_id)
     return jsonify({'picture_list': picture_list})

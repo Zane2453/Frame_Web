@@ -60,6 +60,7 @@ $(function () {
 	}
 
 	function renderTimeoutAccordion() {
+console.log(timeoutData);
 		const timeoutAccordion = `
             <div class="accordion" id="timeout-accordion">			
             ${Object.keys(timeoutData)

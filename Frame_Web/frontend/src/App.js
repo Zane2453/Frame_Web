@@ -47,6 +47,13 @@ class App extends React.Component {
 	FontPlay = undefined
 	margin_B = undefined
 	color_play = 1
+	/* --------------------------------- API --------------------------------- */
+	baseUrl = `${window.url}:${window.port}/`
+	/* --------------------------------- Timeout --------------------------------- */
+	timeoutData = undefined
+	prevMode = ''
+	prevStage = ''
+	timer = 0
 	/* --------------------------------- QRcode --------------------------------- */
 	/* ------------------------------ QR code image ----------------------------- */
 	QRimg = { width: 0, height: 0 }
@@ -110,12 +117,29 @@ class App extends React.Component {
 			}
 		})
 	}
-	/* ---------------------------------- Text Handler --------------------------------- */
+	/* ---------------------------------- Text size calculator --------------------------------- */
 	textSizeCalculator = (showText, width) => {
 		return ((100 / showText.length) * width) / 100
 	}
+	/* ---------------------------------- Text Handler --------------------------------- */
+	timerTextHandler = (mode, stage, p5) => {
+		if (this.timeoutData === undefined) {
+			return false
+		}
+		if (this.prevMode === mode && this.prevStage === stage) {
+			this.timer = this.timer > 0 ? this.timer - 1 : 0
+		} else {
+			this.timer = this.timeoutData[mode][stage]
+			this.prevMode = mode
+			this.prevStage = stage
+		}
+		const showText = this.timer > 0 ? `選擇時間剩 ${this.timer} 秒` : ''
+		p5.textSize(this.textSizeCalculator(showText, p5.width))
+		p5.text(showText, p5.width / 2, this.textSizeCalculator(showText, p5.width))
+	}
 	/* ---------------------------------- Setup --------------------------------- */
 	setup = async (p5, canvasParentRef) => {
+		await this.loadConfigsTimer()
 		p5.frameRate(1)
 		// p5.createCanvas(540, 960, p5.P2D).parent(canvasParentRef);
 		p5.createCanvas(window.innerWidth, window.innerHeight, p5.P2D).parent(canvasParentRef)
@@ -556,6 +580,18 @@ class App extends React.Component {
 				break
 		}
 	}
+	/* ------------------------------ Load configs timer ------------------------------ */
+	loadConfigsTimer = () => {
+		return new Promise((resolve) => {
+			var configsInterval = setInterval(() => {
+				if (window.configs.timer) {
+					this.timeoutData = window.configs.timer
+					clearInterval(configsInterval)
+					resolve()
+				}
+			}, 300)
+		})
+	}
 	/* ------------------------------ load QR code ------------------------------ */
 	loadQR = (p5) => {
 		var QRInterval = setInterval(() => {
@@ -569,7 +605,7 @@ class App extends React.Component {
 				})
 				clearInterval(QRInterval)
 			}
-		}, 1000)
+		}, 300)
 	}
 	/* ------------------- Thread for loading portrait images ------------------- */
 	loadPortraitImageThread = async (p5) => {
