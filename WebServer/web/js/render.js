@@ -172,6 +172,7 @@ function displayMember(memberList){
     lastClickTime = new Date();
 }
 
+// modified 2020/08/04
 function displayShakeInfo(){
     hideall();
 
@@ -190,4 +191,16 @@ function displayShakeInfo(){
 
     //read smartphone's sensor data
     get_sensor_data();
+}
+
+function set_sensor_handler(){
+    if (typeof DeviceMotionEvent.requestPermission === 'function'){
+        DeviceMotionEvent.requestPermission()
+        .then(permissionState => {
+            if (permissionState === 'granted'){
+                window.addEventListener('devicemotion', deviceMotionHandler, false);
+            }
+        })
+        .catch(console.error);
+    }
 }
