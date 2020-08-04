@@ -29,6 +29,11 @@ function displayMode(){
         console.log("game mode:", game_mode);
         sendMode();
         displayGroup(groupList);
+        
+        // modified 2020/08/04
+        if(game_mode == "shake"){
+        	set_sensor_handler();
+        }
     });
 
     console.log("game page");

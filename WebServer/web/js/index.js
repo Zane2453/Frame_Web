@@ -63,13 +63,6 @@ function auth(msg){
                 $("#loadingIndicator").hide();
                 $("#volume").show();
                 displayMode();
-
-                // modified 2020/08/04
-                $('#permission_modal').modal('show',{backdrop: 'static',keyboard: false});
-			    $('#permission_modal').bind('click',function(){
-			        $('#permission_modal').modal('hide');
-			        set_sensor_handler();
-			    });
             },1000);
         }
         else{
