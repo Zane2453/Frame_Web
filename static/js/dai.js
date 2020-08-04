@@ -3,7 +3,8 @@ var _flags = {},    // represent df state
     end_game = false,
     player_uuid = null,
     play_mode = null,   // 0: guess; 1: shake
-    expired_time = null;
+    expired_time = null,
+    picture_number = null;
 
 function initial(){
     var profile = {
@@ -134,6 +135,7 @@ function on_data(odf_name, data) {
                 },
                 success: function (pictureList) {
                     console.log(pictureList);
+                    picture_number = pictureList['picture_number'];
                     MsgHandler('Processing', pictureList['picture_list']);
                     // start loading, and when loading is finished, push_PlayAck_I
                 }

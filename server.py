@@ -111,8 +111,8 @@ def getMember(g_id):
 @cross_origin()
 def getPicture(m_id):
     # Get the Picture List of Member m_id
-    picture_list = query.get_answer_pic(m_id)
-    return jsonify({'picture_list': picture_list})
+    picture_list, picture_number= query.get_answer_pic(m_id)
+    return jsonify({'picture_list': picture_list, 'picture_number': picture_number})
 
 @socketio.on('START')
 def onConnect(msg):
