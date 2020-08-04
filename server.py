@@ -27,6 +27,7 @@ socketio = SocketIO(app, cors_allowed_origins='*', ping_timeout=10, ping_interva
 def index():
     # Create FrameTalk Project
     p_id, ido_id, odo_id, dev_name = utlis.create_frame(gen_uuid())
+    timer = query.get_all_timer()
     '''p_id, ido_id, odo_id = 17, 51, 52
     dev_name = 'Frame_' + str(p_id)'''
 
@@ -39,7 +40,9 @@ def index():
                            p_id=p_id,
                            ido_id=ido_id,
                            odo_id=odo_id,
-                           dev_name=dev_name)
+                           dev_name=dev_name,
+                           client_url=env_config.webServer['url'] + ":" + str(env_config.webServer['port']) + "/game?p_id=" + str(p_id) + "&od_id=" + str(ido_id),
+                           timer=timer)
 
 @app.route('/bind/<string:s_id>', methods=['POST'], strict_slashes=False)
 @cross_origin()

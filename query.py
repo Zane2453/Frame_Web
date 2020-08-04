@@ -1,5 +1,6 @@
 from model import (connect, get_session,
                    Question, Picture, Group, GroupMember, Timer)
+import json
 
 connect()
 db_session = get_session()
@@ -107,4 +108,4 @@ def get_all_timer():
             timer[timer_mode][timer_stage] = timer_value
 
     print(f"[DB] get all timer data success")
-    return timer
+    return json.dumps(timer)

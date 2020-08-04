@@ -14,8 +14,10 @@
   var p_id = "{{ p_id }}";
   var ido_id = "{{ ido_id }}";
   var odo_id = "{{ odo_id }}";
+  var timer = JSON.parse('{{ timer | safe }}');
   var urls = {
     csm_url: '{{ csm_url }}',
+    client_url: '{{ client_url }}',
     frame_bind: function(id) {
       return '{{ url_for("bind", s_id="") }}' + id
     },
