@@ -68,13 +68,18 @@ var MsgHandler = function (dest, data) {
 		status = data.split(':')[1]
 		console.log(`[middleware] [processing] recv data `, signal_type, status)
 		if (signal_type == 'load') {
-			push(
-				'PlayAck-I',
-				JSON.stringify({
-					op: 'Loading',
-					data: status,
-				})
-			)
+			if(status == "finish"){
+                push("PlayAck-I", JSON.stringify({
+                    "op": "Loading",
+                    "data": status,
+                    "picture_number": picture_number
+                }))
+            } else{
+                push("PlayAck-I", JSON.stringify({
+                    "op": "Loading",
+                    "data": status
+                }))
+            }
 		} else if (signal_type == 'display') {
 			push(
 				'PlayAck-I',

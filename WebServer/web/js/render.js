@@ -177,11 +177,8 @@ function displayMember(memberList){
     lastClickTime = new Date();
 }
 
-// modified 2020/08/04
 function displayShakeInfo(){
     hideall();
-
-    chance_count = chance;
 
     console.log("sensor page");
     $("#back_menu").show();
@@ -198,6 +195,7 @@ function displayShakeInfo(){
     get_sensor_data();
 }
 
+// modified 2020/08/04
 function set_sensor_handler(){
     if (typeof DeviceMotionEvent.requestPermission === 'function'){
         DeviceMotionEvent.requestPermission()

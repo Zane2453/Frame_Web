@@ -71,12 +71,14 @@ def get_answer_pic(questio_id):
             .order_by(Picture.order)
             .all())
 
+    picture_number = 0
     for pic_id, pic_order in query:
         picture_data = picture_data + "," + pic_id
+        picture_number += 1
     picture_data = "p" + picture_data + ";"
 
     print("[DB] get %s picture data success" % questio_id)
-    return picture_data
+    return picture_data, picture_number
 
 def get_timer(mode, stage):
     query = (db_session

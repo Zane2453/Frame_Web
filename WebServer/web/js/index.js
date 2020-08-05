@@ -277,12 +277,13 @@ function recvLoading(){
     //6
     socket.on("Loading", function(msg){
         console.log("6. Loading", msg);
-        if(msg == "finish"){
+        if(msg.data == "finish"){
             hideProgressBar();
             if(game_mode == "guess"){
                 displayOption(optionList, answer_idx, answer_description);
             }
             else if(game_mode == "shake"){
+                chance_count = msg.picture_number - 1;
                 displayShakeInfo();
             }
         }

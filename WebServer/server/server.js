@@ -169,7 +169,16 @@ app.post("/pull", function(req, res){
             break;
         case "Loading": //7
             if(daList[p_id]["playing_socket"] != undefined){
-                daList[p_id]["playing_socket"].emit("Loading", json_data.data);
+                if(json_data.data == "finish"){
+                    daList[p_id]["playing_socket"].emit("Loading", {
+                        data: json_data.data,
+                        picture_number: json_data.picture_number
+                    });
+                } else{
+                    daList[p_id]["playing_socket"].emit("Loading", {
+                        data: json_data.data
+                    });
+                }
             }
             break;
         case "DisplayFinish": //9

@@ -63,8 +63,32 @@ function sendAccData(raw_data){
             cooldown = false;
             setTimeout(clear_cooldown, cooldown_interval);
 
-            // sendResult("Wrong");
-            sendShakeData(raw_data);
+            chance_count--;
+            if(chance_count <= 0){
+                //removeEventListener
+                stop_sensor_data();
+
+                sendGuessResult("Correct");
+
+                chance_count = chance;
+                $("#successAlert").html("Nice Job! I am");
+                $("#successAlert").show();
+                $("#successName").html(answer_name + "<br>" + answer_description);
+                $("#successName").show();
+                $("#wrongAlert").hide();
+                $("#options").hide();
+                $("#prompt").hide();
+                $("#prompt2").hide();
+                $("#prompt3").hide();
+                $("#chance").hide();
+                $("#back_menu").hide();
+                $("#prompt6").hide();
+                $("#shakeImage").hide();
+            }
+            else{
+                // sendResult("Wrong");
+                sendShakeData(raw_data);
+            }
 
             // start countdown
             lastClickTime = new Date();
