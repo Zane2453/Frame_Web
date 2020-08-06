@@ -54,6 +54,7 @@ class App extends React.Component {
 	prevMode = ''
 	prevStage = ''
 	timer = 0
+	lastResizeWidth = null
 	/* --------------------------------- QRcode --------------------------------- */
 	/* ------------------------------ QR code image ----------------------------- */
 	QRimg = { width: 0, height: 0 }
@@ -119,23 +120,72 @@ class App extends React.Component {
 	}
 	/* ---------------------------------- Text size calculator --------------------------------- */
 	textSizeCalculator = (showText, width) => {
-		return ((100 / showText.length) * width) / 100
+		const textSize = ~~(width / showText.length)
+		return textSize
+	}
+	/* ---------------------------------- Mode Handler --------------------------------- */
+	getMode = () => {
+		return { 0: 'guess', 1: 'shake' }[window.play_mode]
+	}
+	/* ---------------------------------- Process change handler --------------------------------- */
+	processChangeHandler = (signal) => {
+		this.timer = -1
+		this.caselabel = signal
+		this.prevMode = this.mode
+		this.prevStage = this.stage
+		this.mode = this.getMode()
+
+		switch (signal) {
+			case 'S':
+				this.mode = 'unclassified'
+				this.stage = 'mode'
+				break
+			case 'G':
+				this.stage = 'group'
+				break
+			case 'M':
+				this.stage = 'member'
+				break
+			case 'P':
+				if (this.prevStage !== 'end') this.stage = 'game'
+				break
+			case 'E':
+				this.stage = 'end'
+				break
+			default:
+				break
+		}
+		this.timer = this.timeoutData[this.mode][this.stage]
 	}
 	/* ---------------------------------- Text Handler --------------------------------- */
-	timerTextHandler = (mode, stage, p5) => {
-		if (this.timeoutData === undefined) {
+	timerTextHandler = (p5, width, y) => {
+		const { timeoutData, margin_B, textSizeCalculator } = this
+		if (timeoutData === undefined) {
 			return false
 		}
-		if (this.prevMode === mode && this.prevStage === stage) {
-			this.timer = this.timer > 0 ? this.timer - 1 : 0
-		} else {
-			this.timer = this.timeoutData[mode][stage]
-			this.prevMode = mode
-			this.prevStage = stage
-		}
-		const showText = this.timer > 0 ? `選擇時間剩 ${this.timer} 秒` : ''
-		p5.textSize(this.textSizeCalculator(showText, p5.width))
-		p5.text(showText, p5.width / 2, this.textSizeCalculator(showText, p5.width))
+		const showText = this.timer > 0 ? `選擇時間剩 ${this.timer--} 秒` : ''
+		p5.fill(51)
+		p5.rect(
+			width ? margin_B + (p5.width - 2 * margin_B - width) / 2 : margin_B,
+			y !== undefined ? y : textSizeCalculator(showText, width || p5.width) / 2,
+			width || p5.width - 2 * margin_B,
+			textSizeCalculator(showText, width || p5.width),
+			~~y > 0 ? 30 : y,
+			~~y > 0 ? 30 : y,
+			0,
+			0
+		)
+		p5.fill(4)
+		p5.textSize(textSizeCalculator(showText, width || p5.width))
+		p5.text(
+			showText,
+			p5.width / 2,
+			y !== undefined
+				? y + textSizeCalculator(showText, width || p5.width) / 2
+				: textSizeCalculator(showText, width || p5.width) / 2
+		)
+
+		p5.frameRate(1)
 	}
 	/* ---------------------------------- Setup --------------------------------- */
 	setup = async (p5, canvasParentRef) => {
@@ -160,7 +210,6 @@ class App extends React.Component {
 	}
 	/* ---------------------------------- Draw ---------------------------------- */
 	draw = async (p5) => {
-		console.log(`[frontend] ${this.caselabel}`)
 		/* -------- Client part: receive data from server, store in data_all -------- */
 		if (this.weather_load_finish && this.portrait_load_finish) {
 			if (window.recv.length !== 0) {
@@ -175,15 +224,15 @@ class App extends React.Component {
 					console.log(`[frontend] this.name_weather = `, this.name_weather)
 				} else if (p5.match(data_split[0], 's') !== null) {
 					/* ------------------ switch to game mode selection status ------------------ */
-					this.caselabel = 'S'
+					this.processChangeHandler('S')
 					console.log(`[frontend] recvdata S`)
 				} else if (p5.match(data_split[0], 'g') !== null) {
 					/* -------------------- switch to group selection status -------------------- */
-					this.caselabel = 'G'
+					this.processChangeHandler('G')
 					console.log(`[frontend] recvdata G`)
 				} else if (p5.match(data_split[0], 'm') !== null) {
 					/* -------------------- switch to member selection status ------------------- */
-					this.caselabel = 'M'
+					this.processChangeHandler('M')
 					console.log(`[frontend] recvdata M`)
 				} else if (p5.match(data_split[0], 'p') !== null) {
 					/* -------------------------- switch to game status ------------------------- */
@@ -201,12 +250,13 @@ class App extends React.Component {
 					this.caselabel = 'L'
 				} else if (p5.match(data_split[0], 'f') !== null) {
 					/* -------------------------- will update portrait -------------------------- */
+					this.processChangeHandler('P')
 					this.forward = this.forward + 1
 					this.clearRecvHandler()
 					console.log(`[frontend] recvdata forward+1 :`, this.forward)
 				} else if (p5.match(data_split[0], 'e') !== null) {
 					/* --------------------- will switch to end game status --------------------- */
-					this.caselabel = 'E'
+					this.processChangeHandler('E')
 					console.log(`[frontend] recvdata E`)
 				} else if (p5.match(data_split[0], 'q') !== null) {
 					/* ---------------------- switch to leaved game status ---------------------- */
@@ -332,6 +382,7 @@ class App extends React.Component {
 				p5.textFont(this.FontPlay)
 				p5.textSize(this.textSizeCalculator('Choose a Mode', p5.width))
 				p5.text('Choose a Mode', p5.width / 2, p5.height / 2)
+				this.timerTextHandler(p5, p5.width - 2 * this.margin_B, this.margin_B)
 				this.clearRecvHandler()
 				break
 
@@ -382,6 +433,7 @@ class App extends React.Component {
 				p5.textFont(this.FontPlay)
 				p5.textSize(this.textSizeCalculator('Choose a Group', p5.width))
 				p5.text('Choose a Group', p5.width / 2, p5.height / 2)
+				this.timerTextHandler(p5, p5.width - 2 * this.margin_B, this.margin_B)
 				this.clearRecvHandler()
 				break
 
@@ -432,6 +484,7 @@ class App extends React.Component {
 				p5.textFont(this.FontPlay)
 				p5.textSize(this.textSizeCalculator('Choose a Member', p5.width))
 				p5.text('Choose a Member', p5.width / 2, p5.height / 2)
+				this.timerTextHandler(p5)
 				this.clearRecvHandler()
 				break
 
@@ -458,7 +511,9 @@ class App extends React.Component {
 				p5.fill(255)
 				p5.textSize(this.textSizeCalculator('Loading data ... ' + this.percentage + '%', p5.width))
 				p5.text('Loading data ... ' + this.percentage + '%', p5.width / 2, p5.height / 2)
-				if (this.portrait_load_finish) this.caselabel = 'P'
+				if (this.portrait_load_finish) {
+					this.processChangeHandler('P')
+				}
 				this.clearRecvHandler()
 				break
 
@@ -476,6 +531,11 @@ class App extends React.Component {
 								p5.image(this.pre_img_displaying, (p5.width - resizeWidth) / 2, 0)
 							}
 							this.clearRecvHandler()
+							// End phase
+							if (this.truly_End_flag === 2) {
+								// TODO
+								this.timerTextHandler(p5, this.lastResizeWidth, 0)
+							}
 							break
 						}
 
@@ -487,6 +547,10 @@ class App extends React.Component {
 								resizeWidth = (this.img_displaying.width * p5.height) / this.img_displaying.height
 								this.img_displaying.resize(resizeWidth, p5.height)
 								p5.image(this.img_displaying, (p5.width - resizeWidth) / 2, 0)
+								// Game phase
+								// TODO
+								this.timerTextHandler(p5, resizeWidth, 0)
+								this.lastResizeWidth = resizeWidth
 								this.pre_img_displaying = this.img_displaying
 							} else {
 								if (this.pre_img_displaying !== null) {
@@ -596,6 +660,7 @@ class App extends React.Component {
 	loadQR = (p5) => {
 		var QRInterval = setInterval(() => {
 			if (window.configs.p_id !== undefined && window.configs.odo_id !== undefined) {
+				console.log(window.configs.client_url)
 				QRCode.toDataURL(`${window.configs.client_url}`).then((url) => {
 					try {
 						this.QRimg = p5.loadImage(url)
