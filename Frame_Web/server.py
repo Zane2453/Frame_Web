@@ -92,8 +92,8 @@ def getMember(g_id):
 
 @app.route('/member/<string:m_id>', methods=['GET'], strict_slashes=False)
 def getPicture(m_id):
-    picture_list = query.get_answer_pic(m_id)
-    return jsonify({'picture_list': picture_list})
+    picture_list, picture_number = query.get_answer_pic(m_id)
+    return jsonify({'picture_list': picture_list, 'picture_number': picture_number})
 
 @socketio.on('START')
 def onConnect(msg):
