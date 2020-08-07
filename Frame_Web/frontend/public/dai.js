@@ -40,8 +40,6 @@ function on_data(odf_name, data) {
             // save the first uuid until leave or timeout
             if(player_uuid == null || player_uuid == data["uuid"]){
                 console.log(data['uuid']);
-                // TODO: modified this line to call ManagementModule's API
-                expired_time = 50;
 
                 player_uuid = data["uuid"];
                 play_mode = null;
@@ -59,7 +57,7 @@ function on_data(odf_name, data) {
                             "op": "PlayRes",
                             "uuid": data["uuid"],
                             "play_uuid": player_uuid,
-                            "expired_time": expired_time,
+                            "expired_time": configs.timer,  // modified 2020/08/07
                             "groupList": groupList['group_list']
                         }));
                         // let processing show "play"

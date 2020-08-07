@@ -41,6 +41,10 @@ function displayMode(){
     $("#prompt4").show();
     $("#mode_options").show();
 
+    // modified 2020/08/07
+    // set timeout
+    timeout = expired_time["unclassified"]["mode"];
+
     // start countdown
     lastClickTime = new Date();
 }
@@ -77,6 +81,14 @@ function displayGroup(groupList){
     $("#prompt3").show();
     $("#group_options").show();
 
+    // modified 2020/08/07
+    // set timeout
+    if(game_mode == "guess"){
+        timeout = expired_time["guess"]["group"];
+    } else if(game_mode == "shake"){
+        timeout = expired_time["shake"]["group"];
+    }
+
     // start countdown
     lastClickTime = new Date();
 }
@@ -109,6 +121,10 @@ function displayOption(optionList, answer_idx, answer_description){
     $("#chance").html("<span class='badge' style='background-color:blue;color:white'>" + chance_count + "</span> chances left");
     $("#chance").show();
     console.log("session page");
+
+    // modified 2020/08/07
+    // set timeout
+    timeout = expired_time["guess"]["game"];
 
     // start countdown
     lastClickTime = new Date();
@@ -156,6 +172,10 @@ function displayMember(memberList){
     $(".memberBtn").click(function getMember(){
         showProgressBar();
 
+        // modified 2020/08/07
+        // set timeout
+        timeout = expired_time["shake"]["game"];
+
         lastClickTime = new Date();
 
         let member_idx = parseInt($(this).attr('member_idx'), 10);
@@ -172,6 +192,10 @@ function displayMember(memberList){
     console.log("member page");
     $("#prompt5").show();
     $("#member_options").show();
+
+    // modified 2020/08/07
+    // set timeout
+    timeout = expired_time["shake"]["member"];
 
     // start countdown
     lastClickTime = new Date();

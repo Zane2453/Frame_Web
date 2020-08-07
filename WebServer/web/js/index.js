@@ -15,6 +15,7 @@ var answer_idx, answer_description, answer_id, answer_name;
 var chance_count = chance;
 var nextPic = false;
 var game_mode = undefined;
+var expired_time = undefined;
 
 // control volume
 var mute = 1;
@@ -332,15 +333,23 @@ function recvDisplay(){
             $("#chooseGroupBtn").show().prop('disabled', false);
             $("#modeBtn").show().prop('disabled', false);
             $("#endBtn").show().prop('disabled', false);
+
+            // modified 2020/08/07
+            // set timeout
+            if(game_mode == "guess"){
+                timeout = expired_time["guess"]["end"];
+            } else if(game_mode == "shake"){
+                timeout = expired_time["shake"]["end"];
+            }
         }
     });
 }
 
-// modified 2019/12/03
+// modified 2020/08/07
 function setTimer(){
     socket.on("Timer", function(msg){
         console.log("Timer: ", msg);
-        timeout = parseInt(msg);
+        expired_time = msg;
     });
 }
 
