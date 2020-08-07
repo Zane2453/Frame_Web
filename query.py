@@ -110,4 +110,4 @@ def get_all_timer():
             timer[timer_mode][timer_stage] = timer_value
 
     print(f"[DB] get all timer data success")
-    return json.dumps(timer)
+    return timer

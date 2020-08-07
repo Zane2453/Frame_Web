@@ -8,8 +8,8 @@ var _flags = {},    // represent df state
 
 function initial(){
     var profile = {
-        name: dev_name,
-        dm_name: dm_name,
+        name: configs.dev_name,
+        dm_name: configs.dm_name,
     };
 
     var msg = {
@@ -17,8 +17,8 @@ function initial(){
         on_signal: on_signal,
         on_data: on_data,
         name: profile.name,
-        idf_list: idf_list,
-        odf_list: odf_list,
+        idf_list: configs.idf_list,
+        odf_list: configs.odf_list,
         profile: {model: profile.dm_name},
         accept_protos: ['mqtt'],
     };
@@ -49,7 +49,7 @@ function on_data(odf_name, data) {
                 $.ajax({
                     type: 'GET',
                     //async: true,
-                    url: location.origin + '/group',
+                    url: `${url}:${port}/group`,
                     error: function(e) {
                         console.log(e);
                     },
@@ -99,7 +99,7 @@ function on_data(odf_name, data) {
             $.ajax({
                 type: 'GET',
                 //async: true,
-                url: location.origin + '/group/' + String(data["id"]),
+                url: `${url}:${port}/group/${String(data["id"])}`,
                 error: function(e) {
                     console.log(e);
                 },
@@ -129,7 +129,7 @@ function on_data(odf_name, data) {
             $.ajax({
                 type: 'GET',
                 //async: true,
-                url: location.origin + '/member/' + String(data["id"]),
+                url: `${url}:${port}/member/${String(data["id"])}`,
                 error: function(e) {
                     console.log(e);
                 },
@@ -168,7 +168,7 @@ function on_data(odf_name, data) {
 
 function init_callback(result) {
     console.log('register:', result);
-    url = urls.frame_bind(key)
+    let url = urls.frame_bind(key)
     $.post(url, {
         dataType: 'json',
     })

@@ -5,30 +5,60 @@ var socketIo = io.connect(url + ':' + port);
 var device_id = undefined,
     key = undefined;
 
+window.configs = {
+	csm_url: undefined,
+	dm_name: undefined,
+	idf_list: undefined,
+	odf_list: undefined,
+	p_id: undefined,
+	ido_id: undefined,
+	odo_id: undefined,
+	dev_name: undefined,
+	client_url: undefined,
+	timer: undefined,
+}
+
 $(function(){
     // Initialize
-    socketIo.emit('START',{
-        p_id: p_id,
-        odo_id: odo_id,
-        ido_id: ido_id
-    });
-    socketIo.on('ID', (curID)=>{
-        device_id = curID.id;
-        key = curID.key;
-        initial();
-    });
-    socketIo.on("Leave", (msg)=>{
-        if(p_id == msg["p_id"]){
-            //console.log("WebServer Leave ", p_id);
-            console.log(player_uuid, msg['uuid']);
-            if(player_uuid == msg["uuid"]){
-                player_uuid = null;
-                play_mode = null;
-                // let processing show "see you"
-                MsgHandler('Processing', "q,0;");
-            }
-        }
-    })
+    fetch(`${url}:${port}/init`)
+		.then(function (response) {
+			return response.json()
+		})
+		.then(function (myJson) {
+			const { initConfig } = myJson
+			configs = { ...initConfig }
+			console.log(`[middleware]`)
+			console.dir(configs)
+			urls = {
+				csm_url: configs.csm_url,
+				frame_bind: function (id) {
+					return `${url}:${port}/bind/${id}`
+				},
+			}
+			// Initialize
+			socketIo.emit('START', {
+				p_id: configs.p_id,
+				odo_id: configs.odo_id,
+				ido_id: configs.ido_id
+			})
+			socketIo.on('ID', (curID) => {
+				device_id = curID.id
+				key = curID.key
+				console.log(`[middleware] ${key}`)
+				initial()
+			})
+			socketIo.on("Leave", (msg)=>{
+                if(configs.p_id == msg["p_id"]){
+                    //console.log("WebServer Leave ", p_id);
+                    if(player_uuid == msg["uuid"]){
+                        player_uuid = null;
+                        play_mode = null;
+                        // let processing show "see you"
+                        MsgHandler('Processing', "q,0;");
+                    }
+                }
+            })
+		})
 });
 
 $(window).on('beforeunload', function (e) {

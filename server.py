@@ -25,24 +25,28 @@ socketio = SocketIO(app, cors_allowed_origins='*', ping_timeout=10, ping_interva
 @app.route("/", methods=['GET'], strict_slashes=False)
 @cross_origin()
 def index():
+    # Return FrameTalk Render
+    return render_template("homepage.html")
+
+@app.route('/init', methods=['GET'], strict_slashes=False)
+@cross_origin()
+def getInit():
     # Create FrameTalk Project
     p_id, ido_id, odo_id, dev_name = utlis.create_frame(gen_uuid())
     timer = query.get_all_timer()
-    '''p_id, ido_id, odo_id = 17, 51, 52
-    dev_name = 'Frame_' + str(p_id)'''
-
-    # Return FrameTalk Render
-    return render_template("homepage.html",
-                           csm_url=env_config.csm_api,
-                           dm_name=env_config.odm['name'],
-                           idf_list=env_config.odm['idf_list'],
-                           odf_list=env_config.odm['odf_list'],
-                           p_id=p_id,
-                           ido_id=ido_id,
-                           odo_id=odo_id,
-                           dev_name=dev_name,
-                           client_url=env_config.webServer['url'] + ":" + str(env_config.webServer['port']) + "/game?p_id=" + str(p_id) + "&od_id=" + str(ido_id),
-                           timer=timer)
+    initConfig = {
+        'csm_url': env_config.csm_api,
+        'dm_name': env_config.odm['name'],
+        'idf_list': env_config.odm['idf_list'],
+        'odf_list': env_config.odm['odf_list'],
+        'p_id': p_id,
+        'ido_id': ido_id,
+        'odo_id': odo_id,
+        'dev_name': dev_name,
+        'client_url': env_config.webServer['url'] + ":" + str(env_config.webServer['port']) + "/game?p_id=" + str(p_id) + "&od_id=" + str(ido_id),
+        'timer': timer
+    }
+    return jsonify({'initConfig': initConfig})
 
 @app.route('/bind/<string:s_id>', methods=['POST'], strict_slashes=False)
 @cross_origin()
