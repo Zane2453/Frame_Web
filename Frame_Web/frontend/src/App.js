@@ -627,8 +627,8 @@ class App extends React.Component {
 				p5.textAlign(p5.CENTER, p5.CENTER)
 				p5.textFont(this.FontPlay)
 				p5.fill(180)
-				p5.textSize(this.textSizeCalculator('See you !', p5.width))
-				p5.text('See you !', p5.width / 2, p5.height / 2)
+				p5.textSize(this.textSizeCalculator('遊戲結束', p5.width))
+				p5.text('遊戲結束', p5.width / 2, p5.height / 2)
 				// p5.tint portrait
 				p5.tint(255, p5.map(this.timer_q, 0, this.time_q, 255, 0))
 				p5.noTint()

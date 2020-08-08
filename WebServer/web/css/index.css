@@ -161,9 +161,8 @@ ul{
   color: #e16766;
 }
 #additionalDisplay .bottom-alert {
-  bottom: 40%;
-  position: absolute;
+  margin-top: 20%;
 }
 #additionalDisplay img.bottom-alert {
-  bottom: 20%;
+  margin-top: 10%;
 }
