@@ -142,5 +142,28 @@ ul{
 #footer{
     position:fixed;
     bottom:0;
-    right:0:
+    right:0;
+}
+
+#additionalDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+#additionalDisplay h3 {
+  font-size: 5rem;
+}
+#additionalDisplay h4 {
+  font-size: 2rem;
+}
+#additionalDisplay .color-red {
+  color: #e16766;
+}
+#additionalDisplay .bottom-alert {
+  bottom: 40%;
+  position: absolute;
+}
+#additionalDisplay img.bottom-alert {
+  bottom: 20%;
 }

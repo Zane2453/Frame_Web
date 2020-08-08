@@ -231,3 +231,38 @@ function set_sensor_handler(){
         .catch(console.error);
     }
 }
+
+function displayHandler(type) {
+	hideall()
+	const timeoutType = '模式'
+	const html = {
+		alreadyAPlayerHtml: `
+        <div id="additionalDisplay" style="display: none;">
+            <h3 class="color-red">Sorry!</h3>
+            <br />
+            <h4>已有玩家在玩</h4>
+            <br />
+            <h4>請重新掃描QRCode</h4>
+            <img src="../icon/alert.png" alt="" width="50%" class="bottom-alert"/>
+        </div>
+    `,
+		timeoutHtml: `
+        <div id="additionalDisplay" style="display: none;">
+            <h3 class="color-red">Sorry!</h3>
+            <br />
+            <h4>未選擇${timeoutType}</h4>
+            <br />
+            <h4>請重新掃描QRCode</h4>
+            <img src="../icon/alert.png" alt="" width="50%" class="bottom-alert"/>
+        </div>
+    `,
+		gameEndHtml: `
+        <div id="additionalDisplay" style="display: none;">
+            <h3 class="color-red">遊戲結束</h3>
+            <h4 class="bottom-alert">請重新掃描QRCode</h4>
+        </div>
+    `,
+	}
+	$('#additionalDisplay').replaceWith(html[type])
+	$('#additionalDisplay').show()
+}
