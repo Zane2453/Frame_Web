@@ -53,6 +53,9 @@ function gen_uuid(){
 
 function auth(msg){
     if(uuid != msg.play_uuid){
+        bar.animate(1.0);
+        $("#loadingIndicator").hide();
+        displayHandler("alreadyAPlayerHtml");
         goEndPage();
     }
     else{
@@ -426,11 +429,12 @@ $(function(){
         sendPlayReq();
     });
     $("#endBtn").click(function end(){
+        displayHandler("gameEndHtml");
         goEndPage();
     });
     socket.on("disconnect", function(msg){
         console.log("ws close ", msg);
-        window.location = location.origin + "/endPage";
+        //window.location = location.origin + "/endPage";
     });
     // modified 2020/07/31
     socket.on("End", function(){
@@ -442,6 +446,7 @@ $(function(){
         if((now - lastClickTime)/1000 >= timeout){
             console.log("timeout");
             clearInterval(checkTimeout);
+            displayHandler("timeoutHtml");
             goEndPage();
         }
     }, 1000);
