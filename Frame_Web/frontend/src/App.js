@@ -55,6 +55,7 @@ class App extends React.Component {
 	prevStage = ''
 	timer = 0
 	lastResizeWidth = null
+	lastTextSize = null
 	/* --------------------------------- QRcode --------------------------------- */
 	/* ------------------------------ QR code image ----------------------------- */
 	QRimg = { width: 0, height: 0 }
@@ -164,27 +165,23 @@ class App extends React.Component {
 			return false
 		}
 		const showText = this.timer > 0 ? `選擇時間剩 ${this.timer--} 秒` : ''
+		let originalTextSize = textSizeCalculator(showText, width || p5.width)
+		const textSize = originalTextSize >= 50 ? 40 : originalTextSize - 10
 		p5.fill(51)
 		p5.rect(
 			width ? margin_B + (p5.width - 2 * margin_B - width) / 2 : margin_B,
-			y !== undefined ? y : textSizeCalculator(showText, width || p5.width) / 2,
+			y !== undefined ? y : originalTextSize / 2,
 			width || p5.width - 2 * margin_B,
-			textSizeCalculator(showText, width || p5.width),
+			originalTextSize,
 			~~y > 0 ? 30 : y,
 			~~y > 0 ? 30 : y,
 			0,
 			0
 		)
 		p5.fill(4)
-		p5.textSize(textSizeCalculator(showText, width || p5.width))
-		p5.text(
-			showText,
-			p5.width / 2,
-			y !== undefined
-				? y + textSizeCalculator(showText, width || p5.width) / 2
-				: textSizeCalculator(showText, width || p5.width) / 2
-		)
-
+		p5.textFont('Monaco', textSize)
+		p5.text(showText, p5.width / 2, y !== undefined ? y + originalTextSize / 2 : originalTextSize / 2)
+		p5.textFont('Monaco', this.lastTextSize || 60)
 		p5.frameRate(1)
 	}
 	/* ---------------------------------- Setup --------------------------------- */
@@ -381,6 +378,7 @@ class App extends React.Component {
 				p5.textAlign(p5.CENTER, p5.CENTER)
 				p5.textFont(this.FontPlay)
 				p5.textSize(this.textSizeCalculator('Choose a Mode', p5.width))
+				this.lastTextSize = this.textSizeCalculator('Choose a Mode', p5.width)
 				p5.text('Choose a Mode', p5.width / 2, p5.height / 2)
 				this.timerTextHandler(p5, p5.width - 2 * this.margin_B, this.margin_B)
 				this.clearRecvHandler()
@@ -432,6 +430,7 @@ class App extends React.Component {
 				p5.textAlign(p5.CENTER, p5.CENTER)
 				p5.textFont(this.FontPlay)
 				p5.textSize(this.textSizeCalculator('Choose a Group', p5.width))
+				this.lastTextSize = this.textSizeCalculator('Choose a Group', p5.width)
 				p5.text('Choose a Group', p5.width / 2, p5.height / 2)
 				this.timerTextHandler(p5, p5.width - 2 * this.margin_B, this.margin_B)
 				this.clearRecvHandler()
@@ -483,6 +482,7 @@ class App extends React.Component {
 				p5.textAlign(p5.CENTER, p5.CENTER)
 				p5.textFont(this.FontPlay)
 				p5.textSize(this.textSizeCalculator('Choose a Member', p5.width))
+				this.lastTextSize = this.textSizeCalculator('Choose a Member', p5.width)
 				p5.text('Choose a Member', p5.width / 2, p5.height / 2)
 				this.timerTextHandler(p5)
 				this.clearRecvHandler()
@@ -533,7 +533,6 @@ class App extends React.Component {
 							this.clearRecvHandler()
 							// End phase
 							if (this.truly_End_flag === 2) {
-								// TODO
 								this.timerTextHandler(p5, this.lastResizeWidth, 0)
 							}
 							break
@@ -548,7 +547,6 @@ class App extends React.Component {
 								this.img_displaying.resize(resizeWidth, p5.height)
 								p5.image(this.img_displaying, (p5.width - resizeWidth) / 2, 0)
 								// Game phase
-								// TODO
 								this.timerTextHandler(p5, resizeWidth, 0)
 								this.lastResizeWidth = resizeWidth
 								this.pre_img_displaying = this.img_displaying
