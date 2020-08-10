@@ -16,6 +16,7 @@ var chance_count = chance;
 var nextPic = false;
 var game_mode = undefined;
 var expired_time = undefined;
+var timeout_reason = undefined;
 
 // control volume
 var mute = 1;
@@ -344,6 +345,9 @@ function recvDisplay(){
             } else if(game_mode == "shake"){
                 timeout = expired_time["shake"]["end"];
             }
+
+            // set timeout reason
+            timeout_reason = "未選擇下一步";
         }
     });
 }

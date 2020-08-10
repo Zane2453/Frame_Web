@@ -12,6 +12,7 @@ function hideall(){
     $(".function_btn").hide();
     $(".prompts").hide();
     $(".uls").hide();
+    $("#chance").hide();
     $("#wrongAlert").hide();
     $("#successName").hide();
     $("#successAlert").hide();
@@ -44,6 +45,9 @@ function displayMode(){
     // modified 2020/08/07
     // set timeout
     timeout = expired_time["unclassified"]["mode"];
+
+    // set timeout reason
+    timeout_reason = "未選擇模式";
 
     // start countdown
     lastClickTime = new Date();
@@ -89,6 +93,9 @@ function displayGroup(groupList){
         timeout = expired_time["shake"]["group"];
     }
 
+    // set timeout reason
+    timeout_reason = "未選擇群組";
+
     // start countdown
     lastClickTime = new Date();
 }
@@ -125,6 +132,9 @@ function displayOption(optionList, answer_idx, answer_description){
     // modified 2020/08/07
     // set timeout
     timeout = expired_time["guess"]["game"];
+
+    // set timeout reason
+    timeout_reason = "未選擇選項";
 
     // start countdown
     lastClickTime = new Date();
@@ -197,6 +207,9 @@ function displayMember(memberList){
     // set timeout
     timeout = expired_time["shake"]["member"];
 
+    // set timeout reason
+    timeout_reason = "未選擇成員";
+
     // start countdown
     lastClickTime = new Date();
 }
@@ -214,6 +227,9 @@ function displayShakeInfo(){
         lastClickTime = new Date();
         sendPlayReq();
     });
+
+    // set timeout reason
+    timeout_reason = "未搖動手機";
 
     //read smartphone's sensor data
     get_sensor_data();
@@ -234,7 +250,7 @@ function set_sensor_handler(){
 
 function displayHandler(type) {
 	hideall()
-	const timeoutType = '模式'
+	//const timeoutType = '模式'
 	const html = {
 		alreadyAPlayerHtml: `
         <div id="additionalDisplay" style="display: none;">
@@ -250,7 +266,7 @@ function displayHandler(type) {
         <div id="additionalDisplay" style="display: none;">
             <h3 class="color-red">Sorry!</h3>
             <br />
-            <h4>未選擇${timeoutType}</h4>
+            <h4>${timeout_reason}</h4>
             <br />
             <h4>請重新掃描QRCode</h4>
             <img src="../icon/alert.png" alt="" width="50%" class="bottom-alert"/>
