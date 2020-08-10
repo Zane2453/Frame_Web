@@ -88,8 +88,28 @@ function on_data(odf_name, data) {
 
             // keep game mode
             play_mode = data["mode"];
-            // show group page
-            MsgHandler('Processing', "g,0;");
+
+            $.ajax({
+                type: 'GET',
+                //async: true,
+                url: `${url}:${port}/group/all`,
+                error: function(e) {
+                    console.log(e);
+                },
+                success: function (memberList) {
+                    // check play_mode, display diff page
+                    if(play_mode == 2){
+                        push("PlayAck-I", JSON.stringify({
+                            "op": "MemberRes",
+                            "data": memberList['member_list']
+                        }));
+                        play_mode = 0;
+                    } else {
+                        // show group page
+                        MsgHandler('Processing', "g,0;");
+                    }
+                }
+            });
         } else if(data["type"] == "group"){
             if(player_uuid == null)
                 return true;
