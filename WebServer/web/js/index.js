@@ -56,6 +56,7 @@ function auth(msg){
     if(uuid != msg.play_uuid){
         bar.animate(1.0);
         $("#loadingIndicator").hide();
+        clearInterval(checkTimeout);
         displayHandler("alreadyAPlayerHtml");
         goEndPage();
     }
@@ -433,6 +434,7 @@ $(function(){
         sendPlayReq();
     });
     $("#endBtn").click(function end(){
+        clearInterval(checkTimeout);
         displayHandler("gameEndHtml");
         goEndPage();
     });
