@@ -32,6 +32,7 @@ There is one part of FrameTalk system written in Web Mode: GameModule.
     cd ManagementModule/web
     mkdir img
     cd ../server
+    npm install
     sudo node init_db.js
     ```
     
