@@ -42,6 +42,7 @@ function sendAccData(raw_data){
             $("#successAlert").show();
             $("#successName").html(answer_name + "<br>" + answer_description);
             $("#successName").show();
+            $("#successImage").show();
             $("#wrongAlert").hide();
             $("#options").hide();
             $("#prompt").hide();
@@ -75,6 +76,7 @@ function sendAccData(raw_data){
                 $("#successAlert").show();
                 $("#successName").html(answer_name + "<br>" + answer_description);
                 $("#successName").show();
+                $("#successImage").show();
                 $("#wrongAlert").hide();
                 $("#options").hide();
                 $("#prompt").hide();
