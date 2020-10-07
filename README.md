@@ -4,7 +4,7 @@ There are three parts in FrameTalk system: ManagementModule, WebServer, and Game
 - #### Required tools
   1. install [node.js](https://nodejs.org/en/download/)
   2. install [python3](https://www.python.org/downloads/)
-  3. install [processing](https://processing.org/download/)
+  3. install [Yarn](https://classic.yarnpkg.com/)
 - #### Required node.js modules
   - for ManagementModule
     ``` 
@@ -17,21 +17,40 @@ There are three parts in FrameTalk system: ManagementModule, WebServer, and Game
     npm install
     ``` 
 - #### Required python packages
-  - for GameModule
+  - for GameServer
     ``` 
-    cd FrameTalk/GameModule/
-    pip3 install requests qrcode Image
+    cd FrameTalk/FrameTalk_Web/
+    pip3 install -r requirement.txt
+    ```
+- #### Front-End Initial
+  - ```
+    cd FrameTalk/FrameTalk_Web/frontend
+    yarn install
+    yarn build
+    ```
+    static directory and html templates will be created like below:
+    ```
+    FrameTalk
+        |_Frame_Web
+            |_static
+            |_templates
     ```
 ## Settings
  - #### ManagementModule
     1. ```cd FrameTalk/ManagementModule/server/```
     2. set everythin in 'config.js'
-    3. generate default DB ```node init_db.js```
+    3. generate default DB 
+    ```
+    cd FrameTalk/ManagementModule/web
+    mkdir img
+    cd FrameTalk/ManagementModule/server
+    node init_db.js
+    ```
  - #### WebServer
     1. ```cd FrameTalk/WebServer/server/```
     2. set everything in 'config.js'
- - #### GameModule
-    1. ```cd FrameTalk/GameModule/```
+ - #### GameServer
+    1. ```cd FrameTalk/FrameTalk/FrameTalk_Web```
     2. set everything in 'config.py'
 ## How to start
 - #### 1. WebServer
@@ -39,37 +58,13 @@ There are three parts in FrameTalk system: ManagementModule, WebServer, and Game
     cd FrameTalk/WebServer/server/
     node server.js
     ```
-- #### 2. GameModule
-  - 2-1 DA
+- #### 2. GameServer
     ```
-    cd FrameTalk/GameModule/
-    python3 dai.py
+    cd FrameTalk/FrameTalk_Web
+    python3 server.py
     ```
-  - 2.2 Processing
-    1. ```cd FrameTalk/GameModule/IDA_painting```
-    2. use IDE to open 'IDA_painting.pde' and run
-- #### 3. IoTtalk connection
-  - open IoTtalk GUI
-  - bind idf/odf
-  - set join
-- #### 4. ManagementModule (optional)
+- #### 3. ManagementModule
     ```
     cd FrameTalk/ManagementModule/server/
-    node server.js
-    ```
-- #### 5. frame web version
-    1. install [yarn](https://classic.yarnpkg.com/en/docs/install/#windows-stable)
-    2. yarn install
-    ```
-    cd FrameTalk/WebServer/web/frame
-    yarn install
-    ```
-    3. yarn build
-    ```
-    yarn build
-    ```
-    4. run server (Both client and frame will start)
-    ```
-    cd FrameTalk/WebServer/server
     node server.js
     ```
